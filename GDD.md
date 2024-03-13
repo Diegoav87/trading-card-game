@@ -86,44 +86,48 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 
 ### **Mecánicas**
 
-1. Selección de mazo:
+#### 1. Selección de mazo:
 
-   1. Cada jugador elige uno de los mazos prearmados disponibles, que están vinculados a un país.
+- Cada jugador elige uno de los mazos prearmados disponibles, que están vinculados a un país.
 
-1. Juego:
+#### 2. Juego:
 
-   1. Se decide aleatoriamente qué jugador inicia.
-   2. Cada jugador comienza con tres cartas aleatorias de su mazo.
-   3. Cada jugador recibe una cierta cantidad de monedas de oro al inicio.
-   4. Cada líder comienza con 4000 puntos de vida.
+- Se decide aleatoriamente qué jugador inicia.
+- Cada jugador comienza con tres cartas aleatorias de su mazo.
+- Cada jugador recibe una cierta cantidad de monedas de oro al inicio.
+- Cada líder comienza con 40 puntos de vida.
 
-1. Invocación de Cartas:
+#### 3. Invocación de Cartas:
 
-   1. Al inicio de cada turno, cada jugador toma una carta de su mazo y recibe 3 monedas de oro.
-   2. Los jugadores pueden invocar hasta 3 cartas por turno, dependiendo de la cantidad de oro que tengan.
-   3. En la arena el jugador tiene 3 espacios para invocar cartas.
-   4. Las cartas invocadas solo pueden atacar a partir del siguiente turno, a menos que tengan un efecto que lo permita.
+- Al inicio de cada turno, cada jugador toma una carta de su mazo y recibe 3 monedas de oro.
+- Existen 5 espacios en la arena del lado del jugador.
+- Los jugadores pueden invocar hasta 5 cartas, ya que solo existen 5 espacios para invocación.
+- Las cartas invocadas solo pueden atacar a partir del siguiente turno, a menos que tengan un efecto que lo permita.
 
-1. Ataques:
+#### 4. Ataques:
 
-   1. Los jugadores pueden atacar tanto a las cartas enemigas como al líder enemigo.
-   2. No se puede atacar al líder si hay una carta enemiga directamente en frente de la carta.
-   3. Cuando una carta recibe un daño igual o mayor a sus puntos de vida, se destruye.
-   4. La diferencia entre el daño y la vida de la carta se resta de los puntos de vida del líder enemigo.
-   5. La partida termina cuando los puntos de vida del líder enemigo llegan a 0, y el jugador gana.
+- Los jugadores pueden atacar tanto a las cartas enemigas como al líder enemigo.
+- El jugador selecciona la carta y elige a qué carta quiere atacar. La selección del ataque es manual.
+- No se puede atacar al líder si hay una carta enemiga directamente en frente de la carta.
+- Cuando una carta recibe un daño igual o mayor a sus puntos de vida, se destruye.
+- La diferencia entre el daño y la vida de la carta se resta de los puntos de vida del líder enemigo.
+- La partida termina cuando los puntos de vida del líder enemigo llegan a 0, y el jugador gana.
 
-1. Efectos:
-   1. Ataques que infligen daño a cartas enemigas.
-   2. Habilidades que reducen oro al oponente.
-   3. Habilidades que le roban oro al oponente.
-   4. Habilidades de curación.
-   5. Habilidades de aumento de generación de oro por turno.
-   6. Habilidades que reducen daño a cartas enemigas.
-   7. Habilidades que aumentan el poder de ataque de cartas aliadas.
-   8. Habilidades que permiten atacar varias veces por turno.
-   9. Habilidades de ataques consecutivos.
-   10. Habilidades de robo de vida.
-   11. Habilidades de incremento de vida.
+#### 5. Habilidades:
+
+- Existen 2 tipos de habilidades, habilidades pasivas y habilidades activas.
+- Las habilidades pasivas no requieren activación, por lo cual siempre están activas mientras la carta que posea esta habilidad se encuentre invocada en el campo.
+- Las habilidades activas requieren de una activación para poder ser utilizadas.
+- Los efectos activos tienen un costo de oro, por lo cual el jugador deberá de usar sus monedas de oro para poder activarlas.
+
+#### 6. Efectos:
+
+- Ataques que infligen daño a cartas enemigas.
+- Habilidades que reducen oro al oponente.
+- Habilidades que le roban oro al oponente.
+- Habilidades de curación.
+- Habilidades de aumento de generación de oro por turno.
+- Habilidades que reducen daño a cartas enemigas.
 
 ## _Diseño de Nivel_
 
@@ -157,123 +161,126 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
    1. Terreno Montañoso.
    2. Ambiente nevado.
 
-### **Cartas por Nación**
+### Cartas
 
-#### **Francia**
+**Referencia:** Ataque/Vida/Costo
 
-1. Líder: Napoleón
-   - Habilidad Líder: Embargo - Se reduce a la mitad el oro del oponente. Mínimo 2 de oro.
-2. Soldado de la Segunda Guerra Mundial
-   - Ataque Básico: Tiro de Rifle - Hace una cantidad de daño a una carta enemiga.
-3. Caballero Francés
-   - Ataque Básico: Corte de Espada - Hace una cantidad de daño a una carta enemiga.
-4. Juana de Arco
-   - Habilidad especial: Providencia: Al atacar directamente al líder contrario, se roba 1 moneda de oro.
-   - Ataque Básico: Espada Divina - Inflige daño a una carta enemiga.
-5. Revolucionario Francés
-   - Ataque Básico: Grito de Libertad - Inflige daño a una carta enemiga.
-6. Cura
-   - Ataque Básico: Evangelización - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Agua bendita - Cura 2 puntos de vida de una carta seleccionada.
-7. Victor Hugo
-   - Ataque Básico: Pluma Inspiradora - Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: Inspiración Literaria - Una de tus cartas francesas obtiene un bono de 3 a su ataque y puntos de vida.
-8. María Antonieta
-   - Ataque Básico: Bofetón - Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: ¡Coman pastel! - Selecciona una carta enemiga para evitar que ataque por un turno.
+**Ejemplo:** Carta Dummy - 1ATK/3HP/3G (Ataque/Vida/Costo)
 
-#### **Estados Unidos**
+**Naciones**
 
-1. Líder: George Washington
-   - Habilidad de Líder: Impuestos - Obtiene 1 moneda de oro por cada carta invocada en el campo de batalla.
-2. Soldado de la Independencia
-   - Ataque Básico: Disparo de Mosquete - Inflige daño a una carta enemiga.
-3. Abraham Lincoln
-   - Habilidad Especial: Emancipación - Reduce el poder de ataque de una carta enemiga en un 20% durante un turno.
-   - Ataque Básico: Discurso - Inflige daño a una carta enemiga.
-4. Marine
-   - Ataque Básico: Ráfaga - Inflige daño a una carta enemiga.
-5. John D. Rockefeller
-   - Ataque Básico: Martillo de Oro - inflige daño a una carta enemiga.
-   - Habilidad Especial: Riqueza abrumadora - Rockefeller gana 1 de daño por cada 2 monedas de oro que posea el jugador. Máximo hasta 5 de daño.
-6. Henry Ford
-   - Ataque Básico: Golpe de llave - inflige daño a una carta enemiga.
-   - Habilidad Especial: Línea de Ensamblaje - Genera 2 de oro adicional por cada turno.
-7. Benjamin Franklin
-   - Ataque Básico: Relámpago - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Poder del Dolar - Si Benjamin Franklin logra atacar se da oro extra durante ese turno.
-8. Médico de la Guerra Civil
-   - Ataque Básico: Bisturí - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Rescate - Restaura una cantidad moderada de salud a una carta aliada.
+#### Francia
 
-#### **México**
+- **Líder: Napoleón**
+  - Habilidad Líder: Embargo: Se reduce a la mitad el oro del oponente. Mínimo de reducción 2 (Ej. si el oponente tiene 2 de oro, se le reduce en 2 a 0). Costo 5G, Cooldown 3 turnos
+- **Soldado de la Segunda Guerra Mundial:** 2ATK/2HP/2G
+  - Ataque Básico: Tiro de Rifle - Hace una cantidad de daño a una carta enemiga.
+- **Caballero Francés:** 4ATK/4HP/4G
+  - Ataque Básico: Corte de Espada - Hace una cantidad de daño a una carta enemiga.
+- **Juana de Arco:** 8ATK/5HP/7G
+  - Habilidad especial: Providencia (Pasiva) - Al atacar directamente al líder contrario, se roba 1 moneda de oro.
+  - Ataque Básico: Espada Divina - Inflige daño a una carta enemiga.
+- **Revolucionario Francés:** 2ATK/1HP/1G
+  - Ataque Básico: Grito de Libertad - Inflige daño a una carta enemiga.
+- **Cura:** 1ATK/4HP/2G
+  - Habilidad Especial: Agua bendita (Activa) - Cura 2 puntos de vida de una carta seleccionada. Costo: 2G
+- **Victor Hugo:** 2ATK/3HP/4G
+  - Habilidad especial: Inspiración Literaria (Activa) - Una de tus cartas francesa obtiene un bonus de 3 a su ataque y puntos de vida. Este efecto dura 3 turnos. Costo: 3G
+- **María Antonieta:** 2ATK/5HP/3G
+  - Habilidad especial: ¡Coman pastel! (Activa) - Selecciona una carta enemiga para evitar que ataque por un turno.
 
-1. Líder: Emiliano Zapata
-   - Habilidad líder: Revolución - Todas las cartas invocadas en el campo adquieren un ataque adicional.
-2. Soldado Revolucionario
-   - Ataque Básico: Disparo de Pistola - Inflige daño a una carta enemiga.
-3. Charro
-   - Ataque Básico: Lazo Vaquero - Inflige daño a una carta enemiga.
-4. Guerrero Azteca
-   - Ataque Básico: Golpe de Macuahuitl - Inflige daño a una carta enemiga.
-5. Moctezuma
-   - Ataque Básico: Lanza Azteca - Inflige daño a una carta enemiga.
-   - Habilidad especial: Fuerza del Imperio - Aumenta el poder de ataque de las cartas en el campo en 2 puntos.
-6. Quetzalcóatl
-   - Ataque Básico: Serpiente Emplumada - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Viento Divino: Cada vez que Quetzalcóatl ataque, se le añade un contador. Por cada contador, Quetzalcóatl obtiene 1 de daño.
-7. Benito Juarez
-   - Ataque Básico: Golpe independentista - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Grito revolucionario: Permite que una carta aliada ataque dos veces en un turno.
-8. Shaman
-   - Ataque Básico: Arco y Flecha - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Medicina Ancestral: Cura una carta aliada por 2 puntos.
+#### Estados Unidos
 
-#### **Japón**
+- **Líder: George Washington**
+  - Habilidad de Líder: Impuestos: Obtiene 1 moneda de oro por cada carta invocada en el campo de batalla, incluyendo cartas enemigas. Costo 2G, Cooldown de 4 turnos
+- **Soldado de la Independencia:** 3ATK/3HP/3G
+  - Ataque Básico: Disparo de Mosquete - Inflige daño a una carta enemiga.
+- **Abraham Lincoln:** 3ATK/4HP/5G
+  - Habilidad Especial: Emancipación (Activa) - Reduce 3 puntos de ataque de una carta enemiga durante un turno.
+  - Ataque Básico: Discurso - Inflige daño a una carta enemiga.
+- **Marine:** 4ATK/4HP/4G
+  - Ataque Básico: Ráfaga - Inflige daño a una carta enemiga.
+- **John D. Rockefeller:** 6ATK/9HP/9G
+  - Habilidad Especial: Riqueza abrumadora (Pasiva) - Rockefeller gana 1 de daño por cada 2 monedas de oro que posea el jugador. Máximo hasta 5 de daño.
+  - Ataque Básico: Martillo de Oro - inflige daño a una carta enemiga
+- **Henry Ford:** 3ATK/6HP/6G
+  - Habilidad Especial: Línea de Ensamblaje (Pasiva) - Genera 2 de oro adicional por cada turno que esté Henry invocado en el campo.
+  - Ataque Básico: Golpe de llave - inflige daño a una carta enemiga
+- **Benjamin Franklin:** 4ATK/5HP/5G
+  - Habilidad Especial: Corte eléctrico (Activa) - Benjamin franklin causa una explosión eléctrica que le hace un daño de 2 a todas las cartas enemigas. Costo 3G.
+  - Ataque Básico: Relámpago - Inflige daño a una carta enemiga.
+- **Médico de la Guerra Civil:** 2ATK/3HP/3G
+  - Habilidad Especial: Rescate (Activa) - Selecciona una carta aliada para restaurar 3 puntos de vida. Costo 3G
+  - Ataque Básico: Bisturí - Inflige daño a una carta enemiga.
 
-1. Líder: Oda Nobunaga
-   - Habilidad Líder: El Rey Demonio - Todas las cartas adquieren un robo de vida de 1 punto de vida por cada 2 puntos de ataque. Máximo de 5.
-2. Samurai
-   - Ataque Básico: Corte de Katana - Inflige daño a una carta enemiga.
-3. Ninja
-   - Ataque Básico: Shuriken - Inflige daño a una carta enemiga.
-4. Sakamoto Ryoma
-   - Habilidad especial: Fuerza Rebelde - le otorga robo de vida de 2 puntos a una carta por los próximos 3 turnos.
-   - Ataque Básico: Espada Divina - Inflige daño a una carta enemiga.
-5. Soldado Imperial
-   - Ataque Básico: Disparo de rifle- Inflige daño a una carta enemiga.
-6. Geisha
-   - Ataque Básico: Abanico - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Masaje - Cura 2 puntos de vida de una carta seleccionada.
-7. Miyamoto Musashi
-   - Ataque Básico: Katana Doble- Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: Camino Samurai - Cada vez que Musashi destruye una carta enemiga, aumenta su daño en 1. Máximo de 5.
-8. Sasaki Kojiro
-   - Ataque Básico: Bofetón - Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: Camino del Perdedor - Cada vez que es atacado, Sasaki gana 2 puntos de ataque. Máximo de 6.
+#### México
 
-#### **Italia**
+- **Líder: Emiliano Zapata**
+  - Habilidad líder: Revolución: Todas las cartas aliadas en el campo adquieren un ataque adicional. Costo 4G, Cooldown de 3 turnos
+- **Soldado Revolucionario:** 2ATK/2HP/2G
+  - Ataque Básico: Disparo de Pistola - Inflige daño a una carta enemiga
+- **Charro:** 3ATK/1HP/2G
+  - Ataque Básico: Lazo Vaquero - Inflige daño a una carta enemiga
+- **Guerrero Azteca:** 5ATK/4HP/4G
+  - Ataque Básico: Golpe de Macuahuitl - Inflige daño a una carta enemiga
+- **Moctezuma:** 6ATK/5HP/6G
+  - Habilidad especial (Pasiva): Fuerza del Imperio - Aumenta el poder de ataque de las cartas en el campo en 2 puntos mientras Moctezuma este invocado en el campo.
+  - Ataque Básico: Lanza Azteca - Inflige daño a una carta enemiga
+- **Quetzalcóatl:** 7ATK/7HP/7G
+  - Habilidad Especial: Viento Divino (Pasiva): Cada vez que Quetzalcóatl ataque, se le añade un contador. Por cada contador, Quetzalcóatl obtiene 1 de daño. Máximo de 6
+  - Ataque Básico: Serpiente Emplumada - Inflige daño a una carta enemiga
+- **Benito Juarez:** 5ATK/5HP/5G
+  - Habilidad Especial: Grito revolucionario (Activa): Permite que una carta aliada ataque dos veces en un turno. Costo 3G
+  - Ataque Básico: Golpe independentista - Inflige daño a una carta enemiga
+- **Shaman:** 2ATK/3HP/3G
+  - Habilidad Especial: Medicina Ancestral (Activa): Cura una carta aliada por 3 puntos. Costo 1G
+  - Ataque Básico: Arco y Flecha - Inflige daño a una carta enemiga
 
-1. Líder: Julio César
-   - Habilidad Líder: Testudinum Formate - Todas las cartas adquieren 3 puntos de vida.
-2. Legionario
-   - Ataque Básico: Ataque de Lanza - Inflige daño a una carta enemiga.
-3. Centurión
-   - Ataque Básico: Espadazo Romano - Inflige daño a una carta enemiga.
-4. Diocles
-   - Habilidad especial: Carrera Mortal - Si una carta ataca a Diocles, recibe 2 puntos de daño.
-   - Ataque Básico: Atropellamiento - Inflige daño a una carta enemiga.
-5. Gladiador
-   - Ataque Básico: Hacha fulminante - Inflige daño a una carta enemiga.
-6. Antiguos cristianos
-   - Ataque Básico: Golpe de cruz - Inflige daño a una carta enemiga.
-   - Habilidad Especial: Fé - Cura 2 puntos de vida de una carta seleccionada.
-7. Leonardo Da Vinci
-   - Ataque Básico: Pincelazo - Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: Renacimiento - Cada vez que Da Vinci destruye una carta enemiga, aumenta su daño en 1. Máximo de 5.
-8. Flamma
-   - Ataque Básico: Corte Gladius - Inflige daño moderado a una carta enemiga.
-   - Habilidad especial: Orgullo - Flamma gana 1 punto de vida por cada carta enemiga destruida. Máximo 5.
+#### Japón
+
+- **Líder: Oda Nobuna**
+  - Habilidad Líder: El Rey Demonio: Todas las cartas adquieren un robo de vida de 1 punto de vida por cada 2 puntos de ataque. Máximo de 5 puntos de vida. Costo 3G Cooldown de 2 turnos
+- **Samurai:** 4ATK/2HP/3G
+  - Ataque Básico: Corte de Katana - Inflige daño a una carta enemiga.
+- **Ninja:** 2ATK/2HP/2G
+  - Ataque Básico: Shuriken - Inflige daño a una carta enemiga.
+- **Sakamoto Ryoma:** 5ATK/4HP/5G
+  - Habilidad especial: Fuerza Rebelde (Activa): le otorga robo de vida de 2 puntos a una carta por los próximos 3 turnos. Costo 3G
+  - Ataque Básico: Espada Divina - Inflige daño a una carta enemiga.
+- **Soldado Imperial:** 5 ATK/3HP/4G
+  - Ataque Básico: Disparo de rifle- Inflige daño a una carta enemiga.
+- **Geisha:** 3ATK/1HP/2G
+  - Ataque Básico: Abanico - Inflige daño a una carta enemiga.
+  - Habilidad Especial: Masaje (Activa) - Cura 2 puntos de vida de una carta seleccionada. Costo 2G
+- **Miyamoto Musashi:** 6ATK/8HP/7G
+  - Habilidad especial: Camino Samurai (Pasiva) - Cada vez que Musashi destruye una carta enemiga, aumenta su daño en 1. Máximo de 5 de daño.
+  - Ataque Básico: Katana Doble- Inflige daño moderado a una carta enemiga.
+- **Sasaki Kojiro:** 5ATK/9HP/7G
+  - Habilidad especial: Camino del Perdedor (Pasiva) - Cada vez que es atacado, Sasaki gana 2 puntos de ataque. Máximo de 6.
+  - Ataque Básico: Corte del agua - Inflige daño moderado a una carta enemiga.
+
+#### Italia
+
+- **Líder: Julio César**
+  - Habilidad Líder: Testudinum Formate: Todas las cartas aliadas adquieren 3 puntos de vida. Estos son añadidos al máximo de HP de la carta. Si la carta ha sufrido daño, se curarán 3HP y se le aumentará el máximo de vida, mas no se le curará al máximo. Costo 4G cooldown 4 turnos
+- **Legionario:** 1ATK/3HP/2G
+  - Ataque Básico: Ataque de Lanza - Inflige daño a una carta enemiga.
+- **Centurión:** 2ATK/4HP/3G
+  - Ataque Básico: Espadazo Romano - Inflige daño a una carta enemiga.
+- **Diocles:** 6ATK/8HP/7G
+  - Habilidad especial: Carrera Mortal (Pasiva)- Si una carta ataca a Diocles, recibe 2 puntos de daño .
+  - Ataque Básico: Atropellamiento - Inflige daño a una carta enemiga.
+- **Gladiador:** 3ATK/5HP/ 4G
+  - Ataque Básico: Hacha fulminante - Inflige daño a una carta enemiga.
+- **Antiguos cristianos:** 1ATK/4HP/3G
+  - Ataque Básico: Golpe de cruz - Inflige daño a una carta enemiga.
+  - Habilidad Especial: Fé (Activa) - Cura 3 puntos de vida de una carta seleccionada. Costo 2G
+- **Leonardo Da Vinci:** 3ATK/6HP/5G
+  - Habilidad especial: Renacimiento (Pasiva) - Todas las cartas aliadas adquieren 2 punto de vida extra mientras Leonardo esté en el campo. Condiciones aplican igual que la habilidad de líder.
+  - Ataque Básico: Pincelazo - Inflige daño moderado a una carta enemiga.
+- **Flamma:** 7ATK/5HP/6G
+  - Habilidad especial: Orgullo (Pasiva) - Flamma gana 1 punto de vida por cada carta enemiga destruida. Máximo 5 puntos de vida
+  - Ataque Básico: Corte Gladius - Inflige daño moderado a una carta enemiga.
 
 ### **Flujo de Juego**
 
@@ -387,6 +394,10 @@ Nuestro juego tendrá un estilo realista y detallado similar a Age of Empires 2.
 ![japan](imagenes_gdd/japan.png)
 ![mexico](imagenes_gdd/mexico.png)
 ![italy](imagenes_gdd/italy.png)
+
+#### Tablero
+
+![board](imagenes_gdd/tablero.png)
 
 ## _Sonido/Música_
 
