@@ -17,6 +17,11 @@ public class CardDisplay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        LoadCard(card);
+    }
+
+    public void LoadCard(Card c)
+    {
         nameText.text = card.name;
         descriptionText.text = card.description;
         healthText.text = card.health.ToString();
