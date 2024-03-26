@@ -26,10 +26,6 @@ public class ArenaSlot : MonoBehaviour, IDropHandler
             GameObject dropped = eventData.pointerDrag;
             CardDragDrop draggableCard = dropped.GetComponent<CardDragDrop>();
 
-            // if (draggableCard.parentAfterDrag != null)
-            // {
-            //     draggableCard.parentAfterDrag.GetComponent<ArenaSlot>().RemoveCard();
-            // }
 
             draggableCard.parentAfterDrag = transform;
             SetCard(dropped);
