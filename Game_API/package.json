@@ -1,0 +1,19 @@
+{
+  "name": "time_clash_cronicles",
+  "version": "1.0.0",
+  "description": "API de videojuego",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "API"
+  ],
+  "author": "Isaac, Diego, Andres",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.1",
+    "mysql2": "^3.9.2"
+  }
+}
