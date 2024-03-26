@@ -820,6 +820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionHighlight: {fileID: 15003964115927196}
+  arenaManager: {fileID: 0}
 --- !u!114 &217266253767700694
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,6 +9,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     private bool isSelected = false;
     public Image selectionHighlight;
+    public ArenaManager arenaManager;
 
 
 
@@ -21,6 +22,21 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         ToggleSelection();
+
+        if (isSelected)
+        {
+            bool hasCardInFront = arenaManager.HasCardInFront(transform.parent.GetSiblingIndex());
+
+            if (hasCardInFront)
+            {
+                Debug.Log("Attackl");
+            }
+            else
+            {
+                Debug.Log("no attack");
+
+            }
+        }
     }
 
     void ToggleSelection()
