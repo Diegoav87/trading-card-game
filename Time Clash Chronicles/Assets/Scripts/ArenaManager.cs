@@ -1,19 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class ArenaManager : MonoBehaviour
 {
-    public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
-    public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
+    public List<CardController> playerCards = new List<CardController>(); // Cards in player's field
+    public List<CardController> enemyCards = new List<CardController>(); // Cards in enemy's field
 
-    public bool HasCardInFront(int slotIndex)
+    // Method to check if there's a card in front in the enemy's field
+    public bool HasCardInFront(CardController card)
     {
-        if (slotIndex >= 0 && slotIndex < enemySlots.Count - 1)
-        {
-            return enemySlots[slotIndex].HasCard();
-        }
-
+        // Implement your logic here
+        // For example, you can check if there's a card in front of the specified card
         return false;
     }
 }
