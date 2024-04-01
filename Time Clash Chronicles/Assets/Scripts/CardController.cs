@@ -7,8 +7,6 @@ using TMPro;
 
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
-    private bool isSelected = false;
-    private CardController selectedCardController;
     private ArenaManager arenaManager;
 
     public Image selectionHighlight;
@@ -16,108 +14,94 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     public TextMeshProUGUI healthText;
     public Card cardData;
 
-    private int initialHealth; // Store initial health value
+    public int health;
 
-    
-void Start()
-{
-    selectionHighlight.enabled = false;
-    arenaManager = FindObjectOfType<ArenaManager>();
 
-    if (cardData != null)
+    void Start()
     {
-        initialHealth = cardData.health;
-        ResetHealth();
+        selectionHighlight.enabled = false;
+        arenaManager = FindObjectOfType<ArenaManager>();
+        InitializeCard();
     }
-    else
+
+    private void InitializeCard()
     {
-        Debug.LogError("Card data is not assigned to CardController: " + gameObject.name);
+        health = cardData.health;
     }
-}
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!isSelected)
+        if (!arenaManager.selectedAttacker)
         {
             SelectCard();
         }
         else
         {
-            Attack();
+            Attack(this);
+        }
+    }
+
+    public void Attack(CardController target)
+    {
+        bool isTargetEnemyCard = arenaManager.enemyCards.Contains(target);
+
+        if (arenaManager.selectedAttacker != null && target != null && isTargetEnemyCard)
+        {
+            if (arenaManager.selectedAttacker.cardData != null)
+            {
+                int prevHealth = target.cardData.health;
+                int currentHealth = prevHealth - arenaManager.selectedAttacker.cardData.attack;
+
+                Debug.Log("Attack: " + arenaManager.selectedAttacker.cardData.attack + ", Target Health: " + prevHealth + " -> " + currentHealth);
+
+                target.health = currentHealth;
+                target.UpdateHealthText();
+
+                if (currentHealth <= 0)
+                {
+                    Destroy(target.gameObject);
+                }
+            }
+            else
+            {
+                Debug.Log("Selected attacker has no card data.");
+            }
+
+            arenaManager.selectedAttacker.DeselectCard();
+        }
+        else
+        {
+            Debug.Log("Invalid attack.");
         }
     }
 
     void SelectCard()
     {
-        isSelected = true;
-        selectedCardController = this;
+        arenaManager.SetSelectedAttacker(this);
         selectionHighlight.enabled = true;
-
-        if (attackText != null && healthText != null)
-        {
-            attackText.text = "Attack: " + cardData.attack.ToString();
-            healthText.text = "Health: " + cardData.health.ToString();
-        }
     }
 
-    void Attack()
+    public void DeselectCard()
     {
-        // Check if the selected card belongs to the enemy's side
-        bool isEnemyCard = arenaManager.enemyCards.Contains(selectedCardController);
-
-        if (isEnemyCard)
-        {
-            int prevHealth = selectedCardController.cardData.health;
-            int currentHealth = prevHealth - cardData.attack;
-
-            Debug.Log("Attack: " + cardData.attack + ", Enemy Health: " + prevHealth + " -> " + currentHealth);
-
-            selectedCardController.cardData.health = currentHealth;
-            selectedCardController.UpdateHealthText();
-
-            if (currentHealth <= 0)
-            {
-                Destroy(selectedCardController.gameObject); // Destroy the card if its health reaches 0
-            }
-        }
-        else
-        {
-            Debug.Log("Please select an enemy card to attack.");
-        }
-
-        DeselectCard();
-    }
-
-    void DeselectCard()
-    {
-        isSelected = false;
-        selectedCardController = null;
+        arenaManager.SetSelectedAttacker(null);
         selectionHighlight.enabled = false;
-
-        if (attackText != null && healthText != null)
-        {
-            attackText.text = "";
-            healthText.text = "";
-        }
     }
 
     public void UpdateHealthText()
     {
         if (healthText != null)
         {
-            healthText.text = "Health: " + cardData.health.ToString();
+            healthText.text = health.ToString();
         }
     }
 
     void ResetHealth()
     {
-        cardData.health = initialHealth; // Reset card's health to its initial value
         UpdateHealthText();
     }
 
     void OnDisable()
     {
-        // Reset health when the scene is stopped in the Unity Editor
         ResetHealth();
     }
 }

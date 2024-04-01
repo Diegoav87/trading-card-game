@@ -774,6 +774,7 @@ GameObject:
   - component: {fileID: 217266253767700694}
   - component: {fileID: 6279743791689438125}
   - component: {fileID: 2879427095849822498}
+  - component: {fileID: 8604374238232406957}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -821,7 +822,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionHighlight: {fileID: 15003964115927196}
-  arenaManager: {fileID: 0}
+  attackText: {fileID: 9047148388993347606}
+  healthText: {fileID: 3953136197171619304}
+  cardData: {fileID: 11400000, guid: 56ceddd355375f64d9c3e2d43b28984f, type: 2}
 --- !u!114 &217266253767700694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,6 +859,7 @@ MonoBehaviour:
   parentAfterDrag: {fileID: 0}
   image: {fileID: 4108484522311224011}
   cardBackground: {fileID: 4731254275048036840}
+  dragging: 0
 --- !u!114 &2879427095849822498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -871,6 +875,20 @@ MonoBehaviour:
   verticalMoveAmount: 170
   moveTime: 0.1
   scaleAmount: 2.8
+--- !u!114 &8604374238232406957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8734314848586002364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c29cff538c195c249b69c6f2236de67b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Library: []
+  m_SpriteLibraryAsset: {fileID: 0}
 --- !u!1 &8872883788871959991
 GameObject:
   m_ObjectHideFlags: 0
