@@ -821,7 +821,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionHighlight: {fileID: 15003964115927196}
-  arenaManager: {fileID: 0}
+  attackText: {fileID: 9047148388993347606}
+  healthText: {fileID: 3953136197171619304}
+  cardData: {fileID: 11400000, guid: 56ceddd355375f64d9c3e2d43b28984f, type: 2}
+  health: 0
 --- !u!114 &217266253767700694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,6 +859,7 @@ MonoBehaviour:
   parentAfterDrag: {fileID: 0}
   image: {fileID: 4108484522311224011}
   cardBackground: {fileID: 4731254275048036840}
+  dragging: 0
 --- !u!114 &2879427095849822498
 MonoBehaviour:
   m_ObjectHideFlags: 0

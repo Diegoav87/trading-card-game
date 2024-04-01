@@ -3,45 +3,106 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
+    private ArenaManager arenaManager;
 
-    private bool isSelected = false;
     public Image selectionHighlight;
-    public ArenaManager arenaManager;
+    public TextMeshProUGUI attackText;
+    public TextMeshProUGUI healthText;
+    public Card cardData;
 
+    private int health;
 
 
     void Start()
     {
         selectionHighlight.enabled = false;
+        arenaManager = FindObjectOfType<ArenaManager>();
+        InitializeCard();
+    }
 
+    private void InitializeCard()
+    {
+        health = cardData.health;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        ToggleSelection();
-
-        if (isSelected)
+        if (!arenaManager.selectedAttacker)
         {
-            bool hasCardInFront = arenaManager.HasCardInFront(transform.parent.GetSiblingIndex());
-
-            if (hasCardInFront)
-            {
-                Debug.Log("Attackl");
-            }
-            else
-            {
-                Debug.Log("no attack");
-
-            }
+            SelectCard();
+        }
+        else
+        {
+            Attack(this);
         }
     }
 
-    void ToggleSelection()
+    public void Attack(CardController target)
     {
-        isSelected = !isSelected;
-        selectionHighlight.enabled = isSelected;
+        ArenaSlot enemySlot = GetComponentInParent<ArenaSlot>();
+        bool isTargetEnemyCard = arenaManager.enemySlots.Contains(enemySlot);
+
+        if (arenaManager.selectedAttacker != null && target != null && isTargetEnemyCard)
+        {
+            if (arenaManager.selectedAttacker.cardData != null)
+            {
+                int prevHealth = target.cardData.health;
+                int currentHealth = prevHealth - arenaManager.selectedAttacker.cardData.attack;
+
+                Debug.Log("Attack: " + arenaManager.selectedAttacker.cardData.attack + ", Target Health: " + prevHealth + " -> " + currentHealth);
+
+                target.health = currentHealth;
+                target.UpdateHealthText();
+
+                if (currentHealth <= 0)
+                {
+                    Destroy(target.gameObject);
+                }
+            }
+            else
+            {
+                Debug.Log("Selected attacker has no card data.");
+            }
+
+            arenaManager.selectedAttacker.DeselectCard();
+        }
+        else
+        {
+            Debug.Log("Invalid attack.");
+        }
+    }
+
+    void SelectCard()
+    {
+        arenaManager.SetSelectedAttacker(this);
+        selectionHighlight.enabled = true;
+    }
+
+    public void DeselectCard()
+    {
+        arenaManager.SetSelectedAttacker(null);
+        selectionHighlight.enabled = false;
+    }
+
+    public void UpdateHealthText()
+    {
+        if (healthText != null)
+        {
+            healthText.text = health.ToString();
+        }
+    }
+
+    void ResetHealth()
+    {
+        UpdateHealthText();
+    }
+
+    void OnDisable()
+    {
+        ResetHealth();
     }
 }
