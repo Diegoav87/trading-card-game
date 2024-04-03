@@ -22,12 +22,12 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         cardBackground.raycastTarget = false;
         transform.position = Input.mousePosition;
 
-        CardHover cardHoverScript = GetComponent<CardHover>();
+        // CardHover cardHoverScript = GetComponent<CardHover>();
 
-        if (cardHoverScript != null)
-        {
-            cardHoverScript.ResetScale();
-        }
+        // if (cardHoverScript != null)
+        // {
+        //     cardHoverScript.ResetScale();
+        // }
 
 
     }

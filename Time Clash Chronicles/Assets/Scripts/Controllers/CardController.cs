@@ -7,20 +7,26 @@ using TMPro;
 
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
-    private ArenaManager arenaManager;
+    ArenaManager arenaManager;
 
     public Image selectionHighlight;
     public TextMeshProUGUI attackText;
     public TextMeshProUGUI healthText;
-    public Card cardData;
+    Card cardData;
 
-    private int health;
+    int health;
 
 
     void Start()
     {
         selectionHighlight.enabled = false;
         arenaManager = FindObjectOfType<ArenaManager>();
+        InitializeCard();
+    }
+
+    public void SetCardData(Card card)
+    {
+        cardData = card;
         InitializeCard();
     }
 
@@ -51,14 +57,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler
             if (arenaManager.selectedAttacker.cardData != null)
             {
                 int prevHealth = target.cardData.health;
-                int currentHealth = prevHealth - arenaManager.selectedAttacker.cardData.attack;
+                health = health - arenaManager.selectedAttacker.cardData.attack;
 
-                Debug.Log("Attack: " + arenaManager.selectedAttacker.cardData.attack + ", Target Health: " + prevHealth + " -> " + currentHealth);
+                Debug.Log("Attack: " + arenaManager.selectedAttacker.cardData.attack + ", Target Health: " + prevHealth + " -> " + health);
 
-                target.health = currentHealth;
+                target.health = health;
                 target.UpdateHealthText();
 
-                if (currentHealth <= 0)
+                if (health <= 0)
                 {
                     Destroy(target.gameObject);
                 }

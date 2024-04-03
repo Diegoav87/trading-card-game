@@ -6,21 +6,15 @@ using TMPro;
 
 public class CardDisplay : MonoBehaviour
 {
-
-    public Card card;
     public TMP_Text nameText;
     public TMP_Text descriptionText;
     public TMP_Text healthText;
     public TMP_Text attackText;
     public TMP_Text costText;
     public Image imageSprite;
-    // Start is called before the first frame update
-    void Start()
-    {
-        LoadCard(card);
-    }
 
-    public void LoadCard(Card c)
+
+    public void LoadCard(Card card)
     {
         nameText.text = card.name;
         descriptionText.text = card.description;

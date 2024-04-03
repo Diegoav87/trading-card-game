@@ -2,13 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewCard", menuName = "Card")]
-public class Card : ScriptableObject
+[System.Serializable]
+public class Card
 {
-    public new string name;
+    public int id;
+    public string name;
     public string description;
     public Sprite image;
     public int health;
     public int attack;
     public int cost;
+
+    public Card(int Id, string Name, string Description, Sprite Image, int Health, int Attack, int Cost)
+    {
+        id = Id;
+        name = Name;
+        description = Description;
+        image = Image;
+        health = Health;
+        attack = Attack;
+        cost = Cost;
+    }
 }

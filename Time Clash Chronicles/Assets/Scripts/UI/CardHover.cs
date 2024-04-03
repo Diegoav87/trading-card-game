@@ -15,7 +15,7 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     void Start()
     {
-        startPos = transform.localPosition;
+        startPos = transform.position;
         startScale = transform.localScale;
     }
 
@@ -40,11 +40,13 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 endScale = startScale;
             }
 
-            Vector3 lerpedPos = Vector3.Lerp(transform.localPosition, endPosition, (elapsedTime / moveTime));
+            Vector3 lerpedPos = Vector3.Lerp(transform.position, endPosition, (elapsedTime / moveTime));
             Vector3 lerpedScale = Vector3.Lerp(transform.localScale, endScale, (elapsedTime / moveTime));
 
-            transform.localPosition = lerpedPos;
+            transform.position = lerpedPos;
             transform.localScale = lerpedScale;
+
+
             yield return null;
         }
 
