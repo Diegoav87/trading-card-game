@@ -14,7 +14,7 @@ async function connectToDB() {
   return await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "17June22!",
+    password: "diego",
     database: "time_clash_chronicles",
   });
 }
@@ -76,34 +76,34 @@ app.post("/api/players", async (request, response) => {
   let connection = null;
 
   try {
-  connection = await connectToDB();
+    connection = await connectToDB();
 
-  const data = request.body;
-  console.log(data.name)
+    const data = request.body;
+    console.log(data.name)
 
-  await check(data.name).custom((value) => {
-    if (!value || value === '') {
-      
+    await check(data.name).custom((value) => {
+      if (!value || value === '') {
+
+      }
+      return true;
+    });
+
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
     }
-    return true;
-  });
 
-  const errors = validationResult(request);
-  if (!errors.isEmpty()) {
-    return response.status(400).json({ errors: errors.array() });
-  }
+    const playerData = request.body;
 
-  const playerData = request.body;
+    const [results, fields] = await connection.execute(
+      "INSERT INTO player (name) VALUES (?)",
+      [playerData.name]
+    );
 
-  const [results, fields] = await connection.execute(
-    "INSERT INTO player (name) VALUES (?)",
-    [playerData.name]
-  );
+    console.log(`${results.affectedRows} rows affected`);
 
-  console.log(`${results.affectedRows} rows affected`);
-
-  response.status(200).json({ message: "Jugador creado exitosamente" });
-}  catch (error) {
+    response.status(200).json({ message: "Jugador creado exitosamente" });
+  } catch (error) {
     console.error(error);
     response.status(500).json({ error: "Error al crear el jugador" });
   } finally {
@@ -143,7 +143,7 @@ app.get("/api/players/:id", async (request, response) => {
 });
 
 
-app.get("/api/players/deck/:id", async (request, response) => {
+app.get("/api/decks/:id", async (request, response) => {
   let connection = null;
 
   try {
@@ -194,7 +194,7 @@ app.post("/api/games", async (request, response) => {
       }
     });
 
-    
+
 
     // Verificar la existencia de los jugadores y la arena en la base de datos
     const [player1Result] = await connection.execute("SELECT 1 FROM player WHERE player_id = ?", [data.player1_id]);
@@ -274,7 +274,7 @@ app.get("/api/games/:gameId", async (request, response) => {
 
 
 
-app.get("/api/deck", async (request, response) => {
+app.get("/api/decks", async (request, response) => {
   let connection = null;
 
   try {
@@ -331,9 +331,7 @@ app.get("/api/decks/:deckId/cards", async (request, response) => {
     connection = await connectToDB();
 
     const [results, fields] = await connection.execute(
-      `SELECT c.* FROM card c
-       INNER JOIN deck_card dc ON c.card_id = dc.card_id
-       WHERE dc.deck_id = ?`,
+      `SELECT * from card where deck_id = ?`,
       [deckId]
     );
 
