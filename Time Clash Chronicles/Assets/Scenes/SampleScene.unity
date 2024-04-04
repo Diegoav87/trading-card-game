@@ -906,7 +906,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.3396, y: -363.60046}
+  m_AnchoredPosition: {x: 0, y: -363.60046}
   m_SizeDelta: {x: 160, y: 216}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &619394800
@@ -1613,8 +1613,11 @@ MonoBehaviour:
   enemyDeck: {fileID: 1790481045}
   playerHand: {fileID: 1532866217}
   enemyHand: {fileID: 942645236}
-  leaderSlot: {fileID: 547148201}
+  playerLeaderSlot: {fileID: 547148201}
+  enemyLeaderSlot: {fileID: 1974423344}
   leaderPrefab: {fileID: 2272835919298176173, guid: 38cd49c0fa790d94abbdef798bdf4137, type: 3}
+  playerLeader: {fileID: 0}
+  enemyLeader: {fileID: 0}
   cardPrefab: {fileID: 464967405189297581, guid: 20bd36879b797dc4ea1db0ddfe3dd64a, type: 3}
 --- !u!4 &880569163
 Transform:
@@ -3567,6 +3570,7 @@ RectTransform:
   - {fileID: 1532866216}
   - {fileID: 942645235}
   - {fileID: 547148202}
+  - {fileID: 1974423345}
   m_Father: {fileID: 382387611}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3574,6 +3578,41 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1974423344
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1974423345}
+  m_Layer: 5
+  m_Name: EnemyLeaderSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1974423345
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974423344}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1899751813}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.3396, y: 363}
+  m_SizeDelta: {x: 160, y: 216}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &2066070433 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1452519486981302879, guid: 03ca4da4dd84ee54eb270dc5424097b6, type: 3}

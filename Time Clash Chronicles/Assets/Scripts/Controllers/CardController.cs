@@ -8,11 +8,14 @@ using TMPro;
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
     ArenaManager arenaManager;
+    DeckManager deckManager;
 
     public Image selectionHighlight;
     public TextMeshProUGUI attackText;
     public TextMeshProUGUI healthText;
-    Card cardData;
+    public Card cardData;
+
+    public string owner;
 
     int health;
 
@@ -21,6 +24,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         selectionHighlight.enabled = false;
         arenaManager = FindObjectOfType<ArenaManager>();
+        deckManager = FindObjectOfType<DeckManager>();
         InitializeCard();
     }
 
@@ -40,14 +44,28 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         if (!arenaManager.selectedAttacker)
         {
             SelectCard();
+
+            if (arenaManager.EnemySlotsAreEmpty())
+            {
+                deckManager.enemyLeader.GetComponent<LeaderController>().HilightLeader();
+            }
         }
         else
         {
-            Attack(this);
+            if (arenaManager.selectedAttacker == this)
+            {
+                DeselectCard();
+            }
+            else
+            {
+                AttackCard(this);
+
+            }
+
         }
     }
 
-    public void Attack(CardController target)
+    public void AttackCard(CardController target)
     {
         ArenaSlot enemySlot = GetComponentInParent<ArenaSlot>();
         bool isTargetEnemyCard = arenaManager.enemySlots.Contains(enemySlot);

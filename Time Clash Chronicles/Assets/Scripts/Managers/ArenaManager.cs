@@ -21,6 +21,29 @@ public class ArenaManager : MonoBehaviour
 
     }
 
+    public bool SlotsAreEmpty(List<ArenaSlot> slots)
+    {
+        foreach (ArenaSlot slot in slots)
+        {
+            if (slot.HasCard())
+            {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    public bool PlayerSlotsAreEmpty()
+    {
+        return SlotsAreEmpty(playerSlots);
+    }
+
+    public bool EnemySlotsAreEmpty()
+    {
+        return SlotsAreEmpty(enemySlots);
+    }
+
 
 
 }

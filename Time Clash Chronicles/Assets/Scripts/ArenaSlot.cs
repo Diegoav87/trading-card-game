@@ -6,6 +6,13 @@ using UnityEngine.EventSystems;
 public class ArenaSlot : MonoBehaviour, IDropHandler
 {
 
+    ArenaManager arenaManager;
+
+    void Start()
+    {
+        arenaManager = FindObjectOfType<ArenaManager>();
+
+    }
     void SetCard(GameObject card)
     {
         card.transform.SetParent(transform);
@@ -31,6 +38,11 @@ public class ArenaSlot : MonoBehaviour, IDropHandler
             SetCard(dropped);
         }
 
+    }
+
+    public bool IsEnemySlot()
+    {
+        return arenaManager.enemySlots.Contains(this);
     }
 
     public bool HasCard()
