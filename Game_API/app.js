@@ -1,6 +1,6 @@
 "use strict";
 
-import { check, validationResult } from "express-validator";
+import { check, body, validationResult } from "express-validator";
 import express from "express";
 import mysql from "mysql2/promise"
 
@@ -72,21 +72,13 @@ app.get("/api/cards/:id", async (request, response) => {
   }
 });
 
-app.post("/api/players", async (request, response) => {
+app.post("/api/players", [
+  body('name').notEmpty().withMessage('Name cannot be empty'),
+], async (request, response) => {
   let connection = null;
 
   try {
     connection = await connectToDB();
-
-    const data = request.body;
-    console.log(data.name)
-
-    await check(data.name).custom((value) => {
-      if (!value || value === '') {
-
-      }
-      return true;
-    });
 
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
@@ -99,8 +91,6 @@ app.post("/api/players", async (request, response) => {
       "INSERT INTO player (name) VALUES (?)",
       [playerData.name]
     );
-
-    console.log(`${results.affectedRows} rows affected`);
 
     response.status(200).json({ message: "Jugador creado exitosamente" });
   } catch (error) {
@@ -171,32 +161,24 @@ app.get("/api/decks/:id", async (request, response) => {
   }
 });
 
-app.post("/api/games", async (request, response) => {
+app.post("/api/games", [
+  body('player1_id').isInt({ min: 1 }).withMessage("El ID del jugador 1 debe ser un número entero positivo"),
+  body('player2_id').isInt({ min: 1 }).withMessage("El ID del jugador 2 debe ser un número entero positivo"),
+  body('winner_id').isInt({ min: 1 }).withMessage("El ID del ganador debe ser un número entero positivo"),
+  body('arena_id').isInt({ min: 1 }).withMessage("El ID de la arena debe ser un número entero positivo"),
+  body('duration').isInt({ min: 1, max: 3600 }).withMessage("La duración del juego debe ser un número entero positivo menor o igual a 3600 segundos")
+], async (request, response) => {
   let connection = null;
 
   try {
-    connection = await connectToDB();
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
 
     const data = request.body;
+    connection = await connectToDB();
 
-    console.log("Duration value:", data.duration);
-
-    await Promise.all([
-      check(data.player1_id).isInt({ min: 1 }).withMessage("El ID del jugador 1 debe ser un número entero positivo"),
-      check(data.player2_id).isInt({ min: 1 }).withMessage("El ID del jugador 2 debe ser un número entero positivo"),
-      check(data.winner_id).isInt({ min: 1 }).withMessage("El ID del ganador debe ser un número entero positivo"),
-      check(data.arena_id).isInt({ min: 1 }).withMessage("El ID de la arena debe ser un número entero positivo"),
-      check(data.duration).isInt({ min: 1, max: 3600 }).withMessage("La duración del juego debe ser un número entero positivo menor o igual a 3600 segundos")
-    ]).then(() => {
-      const errors = validationResult(request);
-      if (!errors.isEmpty()) {
-        throw errors.array();
-      }
-    });
-
-
-
-    // Verificar la existencia de los jugadores y la arena en la base de datos
     const [player1Result] = await connection.execute("SELECT 1 FROM player WHERE player_id = ?", [data.player1_id]);
     if (player1Result.length === 0) {
       return response.status(400).json({ error: `El jugador con ID ${data.player1_id} no existe en la base de datos` });
@@ -221,15 +203,15 @@ app.post("/api/games", async (request, response) => {
       "INSERT INTO game (player1_id, player2_id, winner_id, arena_id, duration) VALUES (?,?,?,?,?)",
       [data.player1_id, data.player2_id, data.winner_id, data.arena_id, data.duration]
     );
+
     console.log(`${results.affectedRows} Game affected`);
     console.log(results);
 
     response.status(200).json({ message: "Game added successfully" });
   }
   catch (error) {
-    response.status(500);
-    response.json(error);
-    console.log(error);
+    console.error("Error creating game:", error);
+    response.status(500).json({ error: "Error creating game" });
   }
   finally {
     if (connection !== null) {
