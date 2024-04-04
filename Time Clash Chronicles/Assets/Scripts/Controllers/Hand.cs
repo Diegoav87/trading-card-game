@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Hand : MonoBehaviour
 {
-    public List<Card> cards = new List<Card>();
-    public List<GameObject> handSlots = new List<GameObject>();
-    public GameObject handSlotPrefab;
-    public GameObject cardPrefab;
-    public Transform handParent;
+    List<Card> cards = new List<Card>();
+    [SerializeField] List<GameObject> handSlots = new List<GameObject>();
+    [SerializeField] GameObject handSlotPrefab;
+    [SerializeField] GameObject cardPrefab;
 
     public void AddCard(Card card, int index, string owner)
     {

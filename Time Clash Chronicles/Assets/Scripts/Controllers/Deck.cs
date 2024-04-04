@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-    private List<Card> cards = new List<Card>();
+    List<Card> cards = new List<Card>();
 
     public void AddCard(Card card)
     {

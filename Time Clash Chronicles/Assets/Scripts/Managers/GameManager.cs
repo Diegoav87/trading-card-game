@@ -5,23 +5,27 @@ using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    public Deck playerDeck;
-    public Deck enemyDeck;
-    public Hand playerHand;
-    public Hand enemyHand;
-    public GameObject playerLeaderSlot;
-    public GameObject enemyLeaderSlot;
+    [SerializeField] Deck playerDeck;
+    [SerializeField] Deck enemyDeck;
+    [SerializeField] Hand playerHand;
+    [SerializeField] Hand enemyHand;
+    [SerializeField] GameObject playerLeaderSlot;
+    [SerializeField] GameObject enemyLeaderSlot;
+    [SerializeField] GameObject leaderPrefab;
+    [SerializeField] GameObject cardPrefab;
 
-    public GameObject leaderPrefab;
-
-    public GameObject playerLeader;
-    public GameObject enemyLeader;
-
-
-    public GameObject cardPrefab;
-
+    [HideInInspector] public GameObject playerLeader;
+    [HideInInspector] public GameObject enemyLeader;
 
     void Start()
+    {
+        CreateLeaders();
+        CreateCards();
+        ShuffleDecks();
+        DrawCards();
+    }
+
+    void CreateLeaders()
     {
         Leader playerLeaderData = new Leader("Napoleon", "Emperador de francia", 10, Resources.Load<Sprite>("Images/leader1"));
         GameObject playerLeaderObject = Instantiate(leaderPrefab, playerLeaderSlot.transform);
@@ -34,7 +38,10 @@ public class DeckManager : MonoBehaviour
         enemyLeaderObject.GetComponent<LeaderController>().SetLeaderData(enemyLeaderData);
         enemyLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(enemyLeaderData);
         enemyLeader = enemyLeaderObject;
+    }
 
+    void CreateCards()
+    {
         playerDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
         playerDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
         playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
@@ -42,11 +49,16 @@ public class DeckManager : MonoBehaviour
         enemyDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
         enemyDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
         enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+    }
 
+    void ShuffleDecks()
+    {
         playerDeck.ShuffleDeck();
         enemyDeck.ShuffleDeck();
+    }
 
-
+    void DrawCards()
+    {
         DrawCardToHand(playerDeck, playerHand, 0, "player");
         DrawCardToHand(playerDeck, playerHand, 1, "player");
         DrawCardToHand(playerDeck, playerHand, 2, "player");

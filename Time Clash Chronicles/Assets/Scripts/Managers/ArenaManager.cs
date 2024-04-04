@@ -6,7 +6,7 @@ public class ArenaManager : MonoBehaviour
     public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
     public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
 
-    public CardController selectedAttacker;
+    [HideInInspector] public CardController selectedAttacker;
 
     public void SetSelectedAttacker(CardController attacker)
     {

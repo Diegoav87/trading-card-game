@@ -7,17 +7,17 @@ using TMPro;
 
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
-    ArenaManager arenaManager;
-    DeckManager deckManager;
+    [SerializeField] Image selectionHighlight;
+    [SerializeField] TextMeshProUGUI attackText;
+    [SerializeField] TextMeshProUGUI healthText;
 
-    public Image selectionHighlight;
-    public TextMeshProUGUI attackText;
-    public TextMeshProUGUI healthText;
-    public Card cardData;
-
-    public string owner;
+    [HideInInspector] public Card cardData;
+    [HideInInspector] public string owner;
 
     int health;
+
+    ArenaManager arenaManager;
+    DeckManager deckManager;
 
 
     void Start()
@@ -55,6 +55,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
             if (arenaManager.selectedAttacker == this)
             {
                 DeselectCard();
+                deckManager.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
+
             }
             else
             {

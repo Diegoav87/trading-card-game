@@ -18,14 +18,6 @@ public class ArenaSlot : MonoBehaviour, IDropHandler
         card.transform.SetParent(transform);
     }
 
-    void RemoveCard()
-    {
-        if (HasCard())
-        {
-            transform.GetChild(0).SetParent(null);
-        }
-    }
-
     public void OnDrop(PointerEventData eventData)
     {
         if (!HasCard())

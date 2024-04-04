@@ -1591,7 +1591,7 @@ GameObject:
   - component: {fileID: 880569163}
   - component: {fileID: 880569162}
   m_Layer: 0
-  m_Name: DeckManager
+  m_Name: Game Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1616,9 +1616,9 @@ MonoBehaviour:
   playerLeaderSlot: {fileID: 547148201}
   enemyLeaderSlot: {fileID: 1974423344}
   leaderPrefab: {fileID: 2272835919298176173, guid: 38cd49c0fa790d94abbdef798bdf4137, type: 3}
+  cardPrefab: {fileID: 464967405189297581, guid: 20bd36879b797dc4ea1db0ddfe3dd64a, type: 3}
   playerLeader: {fileID: 0}
   enemyLeader: {fileID: 0}
-  cardPrefab: {fileID: 464967405189297581, guid: 20bd36879b797dc4ea1db0ddfe3dd64a, type: 3}
 --- !u!4 &880569163
 Transform:
   m_ObjectHideFlags: 0
@@ -1779,7 +1779,6 @@ Transform:
   - {fileID: 841498748}
   - {fileID: 209656636}
   - {fileID: 880569163}
-  - {fileID: 1423715112}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &942645234
@@ -1839,7 +1838,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1ce1b30b406844ebc105a96db9055e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cards: []
   handSlots:
   - {fileID: 1221253885}
   - {fileID: 1144280792}
@@ -1849,7 +1847,6 @@ MonoBehaviour:
   - {fileID: 1157286189}
   handSlotPrefab: {fileID: 3445052751061952711, guid: 2c349d264dc4b24478c96c8af04afff5, type: 3}
   cardPrefab: {fileID: 464967405189297581, guid: 20bd36879b797dc4ea1db0ddfe3dd64a, type: 3}
-  handParent: {fileID: 942645235}
 --- !u!114 &942645237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2445,37 +2442,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd8a323f76f6429489db523c4245c88e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1423715111
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1423715112}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1423715112
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1423715111}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 909022766}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1452637886
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2673,7 +2639,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1ce1b30b406844ebc105a96db9055e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cards: []
   handSlots:
   - {fileID: 2131015527}
   - {fileID: 799566796}
@@ -2683,7 +2648,6 @@ MonoBehaviour:
   - {fileID: 1871367284}
   handSlotPrefab: {fileID: 3445052751061952711, guid: 2c349d264dc4b24478c96c8af04afff5, type: 3}
   cardPrefab: {fileID: 464967405189297581, guid: 20bd36879b797dc4ea1db0ddfe3dd64a, type: 3}
-  handParent: {fileID: 1532866216}
 --- !u!114 &1532866218
 MonoBehaviour:
   m_ObjectHideFlags: 0

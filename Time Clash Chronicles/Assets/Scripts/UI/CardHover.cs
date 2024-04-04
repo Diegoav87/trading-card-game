@@ -74,7 +74,7 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!IsInArena() && !GetComponent<CardDragDrop>().dragging)
+        if (!IsInArena())
         {
             StartCoroutine(MoveCard(false));
 

@@ -9,12 +9,10 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     Leader leaderData;
     int health;
 
-    DeckManager deckManager;
     ArenaManager arenaManager;
 
     void Start()
     {
-        deckManager = FindObjectOfType<DeckManager>();
         arenaManager = FindObjectOfType<ArenaManager>();
     }
 
@@ -30,7 +28,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
         GetComponent<Image>().color = color;
     }
 
-    void RemoveHiglight()
+    public void RemoveHiglight()
     {
         GetComponent<Image>().color = Color.white;
     }
@@ -60,5 +58,6 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
         }
 
         RemoveHiglight();
+        arenaManager.selectedAttacker.DeselectCard();
     }
 }

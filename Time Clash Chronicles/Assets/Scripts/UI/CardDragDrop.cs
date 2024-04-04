@@ -8,20 +8,14 @@ using UnityEngine.UI;
 public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [HideInInspector] public Transform parentAfterDrag;
-    public Image image;
-    public Image cardBackground;
-    private Transform originalParent;
-
-
-    ArenaManager arenaManager;
-
-    public bool dragging = false;
+    [SerializeField] Image image;
+    [SerializeField] Image cardBackground;
+    Transform originalParent;
 
     void Start()
     {
         parentAfterDrag = transform.parent;
         originalParent = parentAfterDrag;
-        arenaManager = FindObjectOfType<ArenaManager>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -30,7 +24,6 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             return;
         }
 
-        dragging = true;
         parentAfterDrag = transform.parent;
 
         transform.SetAsLastSibling();
@@ -51,9 +44,6 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnEndDrag(PointerEventData eventData)
     {
-
-
-        dragging = false;
 
         ArenaSlot arenaSlot = eventData.pointerEnter.GetComponent<ArenaSlot>();
 
