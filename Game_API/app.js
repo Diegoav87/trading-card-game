@@ -56,7 +56,7 @@ app.get("/api/cards/:id", async (request, response) => {
       return response.status(404).json({ error: "No se encontró ninguna carta con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    response.status(200).json(results[0]);
   }
   catch (error) {
     response.status(500);
@@ -73,7 +73,8 @@ app.get("/api/cards/:id", async (request, response) => {
 });
 
 app.post("/api/players", [
-  body('name').notEmpty().withMessage('Name cannot be empty'),
+  body('username').notEmpty().withMessage('Username cannot be empty'),
+  body('password').notEmpty().withMessage("Password can't be empty")
 ], async (request, response) => {
   let connection = null;
 
@@ -88,8 +89,8 @@ app.post("/api/players", [
     const playerData = request.body;
 
     const [results, fields] = await connection.execute(
-      "INSERT INTO player (name) VALUES (?)",
-      [playerData.name]
+      "INSERT INTO player (usernaname, password) VALUES (?)",
+      [playerData.username, playerData.password]
     );
 
     response.status(200).json({ message: "Jugador creado exitosamente" });
@@ -104,6 +105,44 @@ app.post("/api/players", [
   }
 });
 
+app.post("/api/login", [
+  body('username').notEmpty().withMessage('Username cannot be empty'),
+  body('password').notEmpty().withMessage("Password can't be empty")
+], async (request, response) => {
+
+  let connection = null;
+
+  try {
+    connection = await connectToDB();
+
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+
+    const { username, password } = request.body;
+
+    const [results, fields] = await connection.execute('SELECT * FROM player WHERE username = ?', [username]);
+
+    if (results.length === 0) {
+      return response.status(401).json({ error: "Nombre de usuario inválido" });
+    }
+
+    const player = results[0];
+
+    if (password != player.password) {
+      return response.status(401).send('Contraseña inválida');
+    }
+
+
+    response.status(200).json(player);
+  } catch (error) {
+    console.error('Error logging in:', error);
+    response.status(500).send('Error logging in');
+  }
+});
+
+
 app.get("/api/players/:id", async (request, response) => {
   let connection = null;
 
@@ -116,7 +155,7 @@ app.get("/api/players/:id", async (request, response) => {
       return response.status(404).json({ error: "No se encontró ningun jugador con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    response.status(200).json(results[0]);
   }
   catch (error) {
     response.status(500);
@@ -145,7 +184,7 @@ app.get("/api/decks/:id", async (request, response) => {
       return response.status(404).json({ error: "No se encontró ningun deck con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    response.status(200).json(results[0]);
   }
   catch (error) {
     response.status(500);

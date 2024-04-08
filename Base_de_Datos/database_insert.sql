@@ -51,10 +51,10 @@ INSERT INTO deck (deck_id, name, description, nation) VALUES
     (5, 'Deck Italia', 'Deck de cartas de Italia', 'Italia');
 
 
-INSERT INTO player (player_id, name, wins, loses) VALUES
-(1, 'Diego', 0, 0),
-(2, 'Andres', 0, 0),
-(3, 'Isaac', 0, 0);
+INSERT INTO player (player_id, username, password, wins, loses) VALUES
+(1, 'Diego', "123", 0, 0),
+(2, 'Andres', "123", 0, 0),
+(3, 'Isaac', "123", 0, 0);
 
 INSERT INTO arena (arena_id, name, nation) VALUES
 (1, "Bosque de las Ardenas", "Francia"),
