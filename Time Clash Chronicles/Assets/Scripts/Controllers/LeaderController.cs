@@ -42,9 +42,24 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (arenaManager.selectedAttacker && arenaManager.EnemySlotsAreEmpty())
+        if (arenaManager.selectedAttacker)
         {
-            TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+            if (arenaManager.selectedAttacker.tag == "PlayerCard")
+            {
+                if (arenaManager.EnemySlotsAreEmpty())
+                {
+                    TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+
+                }
+            }
+            else
+            {
+                if (arenaManager.PlayerSlotsAreEmpty())
+                {
+                    TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+                }
+            }
+
         }
     }
 

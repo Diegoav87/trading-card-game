@@ -24,12 +24,17 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             return;
         }
 
-        parentAfterDrag = transform.parent;
+        if (CanDrag())
+        {
+            parentAfterDrag = transform.parent;
 
-        transform.SetAsLastSibling();
-        image.raycastTarget = false;
-        cardBackground.raycastTarget = false;
-        transform.position = Input.mousePosition;
+            transform.SetAsLastSibling();
+            image.raycastTarget = false;
+            cardBackground.raycastTarget = false;
+            transform.position = Input.mousePosition;
+        }
+
+
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -39,29 +44,52 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             return;
         }
 
-        transform.position = Input.mousePosition;
+        if (CanDrag())
+        {
+            transform.position = Input.mousePosition;
+        }
+
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
 
-        ArenaSlot arenaSlot = eventData.pointerEnter.GetComponent<ArenaSlot>();
-
-        if (arenaSlot != null)
+        if (CanDrag())
         {
-            if ((arenaSlot.IsEnemySlot() && GetComponent<CardController>().owner == "player") || (!arenaSlot.IsEnemySlot() && GetComponent<CardController>().owner == "enemy"))
+            ArenaSlot arenaSlot = eventData.pointerEnter.GetComponent<ArenaSlot>();
+
+            if (arenaSlot != null)
             {
-                transform.SetParent(originalParent);
+                if ((arenaSlot.IsEnemySlot() && GetComponent<CardController>().owner == "player") || (!arenaSlot.IsEnemySlot() && GetComponent<CardController>().owner == "enemy"))
+                {
+                    transform.SetParent(originalParent);
+                }
             }
+
+            transform.localPosition = Vector3.zero;
+            image.raycastTarget = true;
+            cardBackground.raycastTarget = true;
         }
 
-        transform.localPosition = Vector3.zero;
-        image.raycastTarget = true;
-        cardBackground.raycastTarget = true;
+
+
 
     }
 
-    bool IsInArena()
+    public bool CanDrag()
+    {
+        if (GameManager.Instance.currentPlayer == "player")
+        {
+            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "PlayerCard";
+        }
+        else
+        {
+            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "EnemyCard";
+        }
+    }
+
+    public bool IsInArena()
     {
         return transform.parent.GetComponent<ArenaSlot>() != null;
     }

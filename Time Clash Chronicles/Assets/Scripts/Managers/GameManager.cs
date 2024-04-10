@@ -2,9 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DeckManager : MonoBehaviour
+
+
+public class GameManager : MonoBehaviour
 {
+    public enum TurnState
+    {
+        DrawPhase,
+        MainPhase,
+        EndPhase
+    }
+
+    public static GameManager Instance { get; private set; }
     [SerializeField] Deck playerDeck;
     [SerializeField] Deck enemyDeck;
     [SerializeField] Hand playerHand;
@@ -17,12 +28,112 @@ public class DeckManager : MonoBehaviour
     [HideInInspector] public GameObject playerLeader;
     [HideInInspector] public GameObject enemyLeader;
 
+    public TurnState currentTurnState;
+    public Button endTurnButton;
+
+    public string currentPlayer;
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         CreateLeaders();
         CreateCards();
         ShuffleDecks();
-        DrawCards();
+
+        StartCoroutine(InitialDraw());
+
+        currentPlayer = Random.value < 0.5f ? "player" : "enemy";
+
+        endTurnButton.onClick.AddListener(EndTurnButtonClicked);
+    }
+
+    IEnumerator StartTurn()
+    {
+        // Draw phase
+        currentTurnState = TurnState.DrawPhase;
+        Debug.Log("Draw Phase");
+        yield return DrawPhase();
+
+        // Main phase
+        currentTurnState = TurnState.MainPhase;
+        Debug.Log("Main Phase");
+        yield return MainPhase();
+
+
+        SwitchTurn();
+
+        StartCoroutine(StartTurn());
+    }
+
+    void SwitchTurn()
+    {
+        currentPlayer = (currentPlayer == "player") ? "enemy" : "player";
+    }
+
+    IEnumerator InitialDraw()
+    {
+        yield return new WaitForSeconds(1f);
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+        yield return new WaitForSeconds(1f);
+
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+        yield return new WaitForSeconds(1f);
+
+
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+
+        StartCoroutine(StartTurn());
+    }
+
+    IEnumerator DrawPhase()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (currentPlayer == "player")
+        {
+            DrawCardToHand(playerDeck, playerHand, "player");
+        }
+        else
+        {
+            DrawCardToHand(enemyDeck, enemyHand, "enemy");
+        }
+
+        yield return new WaitForSeconds(1f);
+
+    }
+
+    IEnumerator MainPhase()
+    {
+        Debug.Log($"Entering {currentPlayer}'s Main Phase");
+
+        while (currentTurnState == TurnState.MainPhase)
+        {
+            yield return null;
+        }
+    }
+
+
+    public void EndTurnButtonClicked()
+    {
+        if (currentTurnState == TurnState.MainPhase)
+        {
+            currentTurnState = TurnState.EndPhase;
+        }
     }
 
     void CreateLeaders()
@@ -45,9 +156,15 @@ public class DeckManager : MonoBehaviour
         playerDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
         playerDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
         playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
 
         enemyDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
         enemyDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
+        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
         enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
     }
 
@@ -57,26 +174,17 @@ public class DeckManager : MonoBehaviour
         enemyDeck.ShuffleDeck();
     }
 
-    void DrawCards()
-    {
-        DrawCardToHand(playerDeck, playerHand, 0, "player");
-        DrawCardToHand(playerDeck, playerHand, 1, "player");
-        DrawCardToHand(playerDeck, playerHand, 2, "player");
-        DrawCardToHand(enemyDeck, enemyHand, 0, "enemy");
-        DrawCardToHand(enemyDeck, enemyHand, 1, "enemy");
-        DrawCardToHand(enemyDeck, enemyHand, 2, "enemy");
-    }
-
-    public void DrawCardToHand(Deck deck, Hand hand, int index, string owner)
+    public void DrawCardToHand(Deck deck, Hand hand, string owner)
     {
         Card drawnCard = deck.DrawCard();
         if (drawnCard != null)
         {
-            hand.AddCard(drawnCard, index, owner);
+            hand.AddCard(drawnCard, owner);
         }
         else
         {
             Debug.Log("No more cards in the deck!");
         }
     }
+
 }

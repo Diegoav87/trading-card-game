@@ -61,6 +61,15 @@ MonoBehaviour:
   selectionHighlight: {fileID: 8003310838485837914}
   attackText: {fileID: 7041393172636469752}
   healthText: {fileID: 7375704532454500321}
+  cardData:
+    id: 0
+    name: 
+    description: 
+    image: {fileID: 0}
+    health: 0
+    attack: 0
+    cost: 0
+  owner: 
 --- !u!114 &8307698276314893997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,7 +103,6 @@ MonoBehaviour:
   parentAfterDrag: {fileID: 0}
   image: {fileID: 8347052699612035618}
   cardBackground: {fileID: 5432609953317203491}
-  dragging: 0
 --- !u!1 &1606232206811925914
 GameObject:
   m_ObjectHideFlags: 0
