@@ -14,7 +14,7 @@ async function connectToDB() {
   return await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "diego",
+    password: "17June22!",
     database: "time_clash_chronicles",
   });
 }
@@ -89,7 +89,7 @@ app.post("/api/players", [
     const playerData = request.body;
 
     const [results, fields] = await connection.execute(
-      "INSERT INTO player (usernaname, password) VALUES (?)",
+      "INSERT INTO player (username, password) VALUES (?, ?)",
       [playerData.username, playerData.password]
     );
 
