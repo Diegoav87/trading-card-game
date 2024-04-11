@@ -4,17 +4,17 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 
-public class APIConnection : MonoBehaviour
+public class APIManager : MonoBehaviour
 {
     string apiURL = "http://localhost:5000/api/";
     string data;
 
     void Start()
     {
-        StartCoroutine(LoginPlayer("login/", new { username = "Diego", password = "123" }));
+        // StartCoroutine(LoginPlayer("login/", new { username = "Diego", password = "123" }));
     }
 
-    IEnumerator SendGetRequest(string endpoint)
+    public IEnumerator SendGetRequest(string endpoint)
     {
         UnityWebRequest www = UnityWebRequest.Get(apiURL + endpoint);
         yield return www.SendWebRequest();

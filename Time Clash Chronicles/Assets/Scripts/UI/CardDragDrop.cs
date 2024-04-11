@@ -12,34 +12,35 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     [SerializeField] Image cardBackground;
     Transform originalParent;
 
+    CardController cardController;
+
     void Start()
     {
         parentAfterDrag = transform.parent;
         originalParent = parentAfterDrag;
+        cardController = GetComponent<CardController>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (IsInArena())
+        if (cardController.CanInvoke())
         {
-            return;
+            parentAfterDrag = transform.parent;
+
+            transform.SetAsLastSibling();
+            image.raycastTarget = false;
+            cardBackground.raycastTarget = false;
+            transform.position = Input.mousePosition;
         }
 
-        parentAfterDrag = transform.parent;
 
-        transform.SetAsLastSibling();
-        image.raycastTarget = false;
-        cardBackground.raycastTarget = false;
-        transform.position = Input.mousePosition;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (IsInArena())
+        if (cardController.CanInvoke())
         {
-            return;
+            transform.position = Input.mousePosition;
         }
-
-        transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -59,10 +60,5 @@ public class CardDragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         image.raycastTarget = true;
         cardBackground.raycastTarget = true;
 
-    }
-
-    bool IsInArena()
-    {
-        return transform.parent.GetComponent<ArenaSlot>() != null;
     }
 }

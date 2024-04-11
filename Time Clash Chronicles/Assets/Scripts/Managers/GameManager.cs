@@ -2,13 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using Newtonsoft.Json;
+using UnityEngine.Networking;
 
-public class DeckManager : MonoBehaviour
+
+
+public class GameManager : MonoBehaviour
 {
+    public enum TurnState
+    {
+        DrawPhase,
+        MainPhase,
+        EndPhase
+    }
+
+    string apiURL = "http://localhost:5000/api/";
+    string data;
+
+    public static GameManager Instance { get; private set; }
     [SerializeField] Deck playerDeck;
     [SerializeField] Deck enemyDeck;
     [SerializeField] Hand playerHand;
     [SerializeField] Hand enemyHand;
+
     [SerializeField] GameObject playerLeaderSlot;
     [SerializeField] GameObject enemyLeaderSlot;
     [SerializeField] GameObject leaderPrefab;
@@ -17,38 +35,131 @@ public class DeckManager : MonoBehaviour
     [HideInInspector] public GameObject playerLeader;
     [HideInInspector] public GameObject enemyLeader;
 
+    public CoinController playerCoins;
+
+    public CoinController enemyCoins;
+
+    public TurnState currentTurnState;
+    public Button endTurnButton;
+
+    public string currentPlayer;
+
+    ArenaManager arenaManager;
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
-        CreateLeaders();
+        arenaManager = FindObjectOfType<ArenaManager>();
         CreateCards();
         ShuffleDecks();
-        DrawCards();
+
+        StartCoroutine(InitialDraw());
+
+        currentPlayer = Random.value < 0.5f ? "player" : "enemy";
+
+        endTurnButton.onClick.AddListener(EndTurnButtonClicked);
     }
 
-    void CreateLeaders()
+    IEnumerator StartTurn()
     {
-        Leader playerLeaderData = new Leader("Napoleon", "Emperador de francia", 10, Resources.Load<Sprite>("Images/leader1"));
-        GameObject playerLeaderObject = Instantiate(leaderPrefab, playerLeaderSlot.transform);
-        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(playerLeaderData);
-        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(playerLeaderData);
-        playerLeader = playerLeaderObject;
+        // Draw phase
+        currentTurnState = TurnState.DrawPhase;
+        Debug.Log("Draw Phase");
+        yield return DrawPhase();
 
-        Leader enemyLeaderData = new Leader("Julius", "Emperador de roma", 10, Resources.Load<Sprite>("Images/leader1"));
-        GameObject enemyLeaderObject = Instantiate(leaderPrefab, enemyLeaderSlot.transform);
-        enemyLeaderObject.GetComponent<LeaderController>().SetLeaderData(enemyLeaderData);
-        enemyLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(enemyLeaderData);
-        enemyLeader = enemyLeaderObject;
+        // Main phase
+        currentTurnState = TurnState.MainPhase;
+        Debug.Log("Main Phase");
+        yield return MainPhase();
+
+        arenaManager.ResetEnemyAttacks();
+        arenaManager.ResetPlayerAttacks();
+
+        SwitchTurn();
+
+        StartCoroutine(StartTurn());
     }
 
-    void CreateCards()
+    void SwitchTurn()
     {
-        playerDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        playerDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
-        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+        currentPlayer = (currentPlayer == "player") ? "enemy" : "player";
+    }
 
-        enemyDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        enemyDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
-        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
+    IEnumerator InitialDraw()
+    {
+        yield return new WaitForSeconds(1f);
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+        yield return new WaitForSeconds(1f);
+
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+        yield return new WaitForSeconds(1f);
+
+
+        DrawCardToHand(playerDeck, playerHand, "player");
+        DrawCardToHand(enemyDeck, enemyHand, "enemy");
+
+        playerCoins.coins += 3;
+        enemyCoins.coins += 3;
+        playerCoins.UpdateHealthText();
+        enemyCoins.UpdateHealthText();
+
+
+        StartCoroutine(StartTurn());
+    }
+
+    IEnumerator DrawPhase()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (currentPlayer == "player")
+        {
+            DrawCardToHand(playerDeck, playerHand, "player");
+            playerCoins.coins += 3;
+            playerCoins.UpdateHealthText();
+
+        }
+        else
+        {
+            DrawCardToHand(enemyDeck, enemyHand, "enemy");
+            enemyCoins.coins += 3;
+            enemyCoins.UpdateHealthText();
+
+        }
+
+        yield return new WaitForSeconds(1f);
+    }
+
+    IEnumerator MainPhase()
+    {
+        Debug.Log($"Entering {currentPlayer}'s Main Phase");
+
+        while (currentTurnState == TurnState.MainPhase)
+        {
+            yield return null;
+        }
+    }
+
+
+    public void EndTurnButtonClicked()
+    {
+        if (currentTurnState == TurnState.MainPhase)
+        {
+            currentTurnState = TurnState.EndPhase;
+        }
     }
 
     void ShuffleDecks()
@@ -57,26 +168,83 @@ public class DeckManager : MonoBehaviour
         enemyDeck.ShuffleDeck();
     }
 
-    void DrawCards()
-    {
-        DrawCardToHand(playerDeck, playerHand, 0, "player");
-        DrawCardToHand(playerDeck, playerHand, 1, "player");
-        DrawCardToHand(playerDeck, playerHand, 2, "player");
-        DrawCardToHand(enemyDeck, enemyHand, 0, "enemy");
-        DrawCardToHand(enemyDeck, enemyHand, 1, "enemy");
-        DrawCardToHand(enemyDeck, enemyHand, 2, "enemy");
-    }
-
-    public void DrawCardToHand(Deck deck, Hand hand, int index, string owner)
+    public void DrawCardToHand(Deck deck, Hand hand, string owner)
     {
         Card drawnCard = deck.DrawCard();
         if (drawnCard != null)
         {
-            hand.AddCard(drawnCard, index, owner);
+            hand.AddCard(drawnCard, owner);
         }
         else
         {
             Debug.Log("No more cards in the deck!");
         }
     }
+
+
+    GameObject CreateLeader(LeaderData leader, GameObject slot)
+    {
+        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Cards/emiliano_zapata"));
+        GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
+        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
+        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(leaderData);
+        return playerLeaderObject;
+    }
+
+    void CreateCards()
+    {
+        StartCoroutine(GetDeckCards("decks/2/", playerDeck, "player"));
+        StartCoroutine(GetDeckCards("decks/3/", enemyDeck, "enemy"));
+    }
+
+    IEnumerator GetDeckCards(string endpoint, Deck deck, string player)
+    {
+        yield return StartCoroutine(SendGetRequest(endpoint));
+
+        if (data != null)
+        {
+            DeckData deckData = JsonConvert.DeserializeObject<DeckData>(data);
+
+            foreach (CardData card in deckData.cards)
+            {
+                deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/Cards/gladiador"), card.health, card.attack, card.cost));
+                Debug.Log(card.name);
+            }
+
+            if (player == "player")
+            {
+                playerLeader = CreateLeader(deckData.leader, playerLeaderSlot);
+            }
+            else
+            {
+                enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot);
+            }
+
+        }
+
+
+    }
+
+    public IEnumerator SendGetRequest(string endpoint)
+    {
+        UnityWebRequest www = UnityWebRequest.Get(apiURL + endpoint);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"Request failed: {www.error}");
+
+            if (!string.IsNullOrEmpty(www.downloadHandler.text))
+            {
+                Debug.LogError($"Error message: {www.downloadHandler.text}");
+            }
+        }
+        else
+        {
+            data = www.downloadHandler.text;
+        }
+    }
+
+
+
 }

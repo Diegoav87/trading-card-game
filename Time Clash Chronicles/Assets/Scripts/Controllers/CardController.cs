@@ -15,66 +15,98 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     [HideInInspector] public string owner;
 
     int health;
+    int cost;
 
     ArenaManager arenaManager;
-    DeckManager deckManager;
+
+    public bool hasAttacked = false;
 
 
     void Start()
     {
         selectionHighlight.enabled = false;
         arenaManager = FindObjectOfType<ArenaManager>();
-        deckManager = FindObjectOfType<DeckManager>();
-        InitializeCard();
     }
 
     public void SetCardData(Card card)
     {
         cardData = card;
-        InitializeCard();
-    }
-
-    private void InitializeCard()
-    {
         health = cardData.health;
+        cost = cardData.cost;
+        string cardTag = owner == "player" ? "PlayerCard" : "EnemyCard";
+        gameObject.tag = cardTag;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!arenaManager.selectedAttacker)
+        if (GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase)
         {
-            SelectCard();
+            if (!arenaManager.selectedAttacker)
+            {
 
-            if (arenaManager.EnemySlotsAreEmpty())
-            {
-                deckManager.enemyLeader.GetComponent<LeaderController>().HilightLeader();
-            }
-        }
-        else
-        {
-            if (arenaManager.selectedAttacker == this)
-            {
-                DeselectCard();
-                deckManager.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
+                if (CanSelect())
+                {
+                    SelectCard();
+
+                    if (arenaManager.selectedAttacker.tag == "PlayerCard")
+                    {
+                        if (arenaManager.EnemySlotsAreEmpty())
+                        {
+                            GameManager.Instance.enemyLeader.GetComponent<LeaderController>().HilightLeader();
+                        }
+                    }
+                    else
+                    {
+                        if (arenaManager.PlayerSlotsAreEmpty())
+                        {
+                            GameManager.Instance.playerLeader.GetComponent<LeaderController>().HilightLeader();
+                        }
+                    }
+                }
+
+
+
 
             }
             else
             {
-                AttackCard(this);
+                if (arenaManager.selectedAttacker == this)
+                {
+
+                    if (tag == "PlayerCard")
+                    {
+                        GameManager.Instance.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
+                    }
+                    else
+                    {
+                        GameManager.Instance.playerLeader.GetComponent<LeaderController>().RemoveHiglight();
+                    }
+
+                    DeselectCard();
+
+
+                }
+                else
+                {
+                    AttackCard(this);
+
+                }
 
             }
-
         }
+
+
     }
 
     public void AttackCard(CardController target)
     {
-        ArenaSlot enemySlot = GetComponentInParent<ArenaSlot>();
-        bool isTargetEnemyCard = arenaManager.enemySlots.Contains(enemySlot);
-
-        if (arenaManager.selectedAttacker != null && target != null && isTargetEnemyCard)
+        if (arenaManager.selectedAttacker != null && target != null)
         {
-            if (arenaManager.selectedAttacker.cardData != null)
+            if (arenaManager.selectedAttacker.hasAttacked)
+            {
+                Debug.Log("Card already attacked this turn");
+            }
+            else
             {
                 int prevHealth = target.cardData.health;
                 health = health - arenaManager.selectedAttacker.cardData.attack;
@@ -88,17 +120,77 @@ public class CardController : MonoBehaviour, IPointerClickHandler
                 {
                     Destroy(target.gameObject);
                 }
-            }
-            else
-            {
-                Debug.Log("Selected attacker has no card data.");
+
+                arenaManager.selectedAttacker.hasAttacked = true;
+                arenaManager.selectedAttacker.DeselectCard();
+
             }
 
-            arenaManager.selectedAttacker.DeselectCard();
+
         }
         else
         {
             Debug.Log("Invalid attack.");
+        }
+    }
+
+    bool CanSelect()
+    {
+        if (GameManager.Instance.currentPlayer == "player")
+        {
+            return tag == "PlayerCard" && transform.parent.GetComponent<ArenaSlot>() != null;
+        }
+        else
+        {
+            return tag == "EnemyCard" && transform.parent.GetComponent<ArenaSlot>() != null;
+        }
+    }
+
+    bool CanDrag()
+    {
+        if (GameManager.Instance.currentPlayer == "player")
+        {
+            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "PlayerCard";
+        }
+        else
+        {
+            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "EnemyCard";
+        }
+    }
+
+    bool HasEnoughCoinsToInvoke()
+    {
+        if (GameManager.Instance.currentPlayer == "player")
+        {
+            return GameManager.Instance.playerCoins.coins >= cost;
+        }
+        else
+        {
+            return GameManager.Instance.enemyCoins.coins >= cost;
+        }
+    }
+
+    public bool IsInArena()
+    {
+        return transform.parent.GetComponent<ArenaSlot>() != null;
+    }
+
+    public bool CanInvoke()
+    {
+        return !IsInArena() && CanDrag() && HasEnoughCoinsToInvoke();
+    }
+
+    public void InvokeCard()
+    {
+        if (GameManager.Instance.currentPlayer == "player")
+        {
+            GameManager.Instance.playerCoins.coins -= cost;
+            GameManager.Instance.playerCoins.UpdateHealthText();
+        }
+        else
+        {
+            GameManager.Instance.enemyCoins.coins -= cost;
+            GameManager.Instance.enemyCoins.UpdateHealthText();
         }
     }
 
