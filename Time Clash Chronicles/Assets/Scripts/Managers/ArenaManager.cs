@@ -44,6 +44,27 @@ public class ArenaManager : MonoBehaviour
         return SlotsAreEmpty(enemySlots);
     }
 
+    void ResetAttacks(List<ArenaSlot> slots)
+    {
+        foreach (ArenaSlot slot in slots)
+        {
+            if (slot.HasCard())
+            {
+                CardController cardController = slot.GetComponentInChildren<CardController>();
 
+                cardController.hasAttacked = false;
+            }
+        }
+    }
+
+    public void ResetPlayerAttacks()
+    {
+        ResetAttacks(playerSlots);
+    }
+
+    public void ResetEnemyAttacks()
+    {
+        ResetAttacks(enemySlots);
+    }
 
 }

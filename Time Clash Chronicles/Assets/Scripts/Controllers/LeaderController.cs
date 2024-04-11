@@ -9,6 +9,8 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     Leader leaderData;
     int health;
 
+    [SerializeField] Image leaderImage;
+
     ArenaManager arenaManager;
 
     void Start()
@@ -25,12 +27,12 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     public void HilightLeader()
     {
         Color color = HexToColor("#FFB1B1");
-        GetComponent<Image>().color = color;
+        leaderImage.color = color;
     }
 
     public void RemoveHiglight()
     {
-        GetComponent<Image>().color = Color.white;
+        leaderImage.color = Color.white;
     }
 
     Color HexToColor(string hex)
@@ -44,22 +46,32 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     {
         if (arenaManager.selectedAttacker)
         {
-            if (arenaManager.selectedAttacker.tag == "PlayerCard")
+            if (!arenaManager.selectedAttacker.hasAttacked)
             {
-                if (arenaManager.EnemySlotsAreEmpty())
+                if (arenaManager.selectedAttacker.tag == "PlayerCard")
                 {
-                    TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+                    if (arenaManager.EnemySlotsAreEmpty())
+                    {
+                        arenaManager.selectedAttacker.hasAttacked = true;
+                        TakeDamage(arenaManager.selectedAttacker.cardData.attack);
 
+
+                    }
+                }
+                else
+                {
+                    if (arenaManager.PlayerSlotsAreEmpty())
+                    {
+                        arenaManager.selectedAttacker.hasAttacked = true;
+                        TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+
+                    }
                 }
             }
             else
             {
-                if (arenaManager.PlayerSlotsAreEmpty())
-                {
-                    TakeDamage(arenaManager.selectedAttacker.cardData.attack);
-                }
+                Debug.Log("Card already attacked this turn");
             }
-
         }
     }
 

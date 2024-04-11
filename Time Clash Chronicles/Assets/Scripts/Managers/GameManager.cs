@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using Newtonsoft.Json;
+using UnityEngine.Networking;
 
 
 
@@ -15,11 +18,15 @@ public class GameManager : MonoBehaviour
         EndPhase
     }
 
+    string apiURL = "http://localhost:5000/api/";
+    string data;
+
     public static GameManager Instance { get; private set; }
     [SerializeField] Deck playerDeck;
     [SerializeField] Deck enemyDeck;
     [SerializeField] Hand playerHand;
     [SerializeField] Hand enemyHand;
+
     [SerializeField] GameObject playerLeaderSlot;
     [SerializeField] GameObject enemyLeaderSlot;
     [SerializeField] GameObject leaderPrefab;
@@ -28,10 +35,16 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameObject playerLeader;
     [HideInInspector] public GameObject enemyLeader;
 
+    public CoinController playerCoins;
+
+    public CoinController enemyCoins;
+
     public TurnState currentTurnState;
     public Button endTurnButton;
 
     public string currentPlayer;
+
+    ArenaManager arenaManager;
 
 
     private void Awake()
@@ -48,7 +61,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        CreateLeaders();
+        arenaManager = FindObjectOfType<ArenaManager>();
         CreateCards();
         ShuffleDecks();
 
@@ -71,6 +84,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Main Phase");
         yield return MainPhase();
 
+        arenaManager.ResetEnemyAttacks();
+        arenaManager.ResetPlayerAttacks();
 
         SwitchTurn();
 
@@ -97,6 +112,12 @@ public class GameManager : MonoBehaviour
         DrawCardToHand(playerDeck, playerHand, "player");
         DrawCardToHand(enemyDeck, enemyHand, "enemy");
 
+        playerCoins.coins += 3;
+        enemyCoins.coins += 3;
+        playerCoins.UpdateHealthText();
+        enemyCoins.UpdateHealthText();
+
+
         StartCoroutine(StartTurn());
     }
 
@@ -107,14 +128,19 @@ public class GameManager : MonoBehaviour
         if (currentPlayer == "player")
         {
             DrawCardToHand(playerDeck, playerHand, "player");
+            playerCoins.coins += 3;
+            playerCoins.UpdateHealthText();
+
         }
         else
         {
             DrawCardToHand(enemyDeck, enemyHand, "enemy");
+            enemyCoins.coins += 3;
+            enemyCoins.UpdateHealthText();
+
         }
 
         yield return new WaitForSeconds(1f);
-
     }
 
     IEnumerator MainPhase()
@@ -136,38 +162,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void CreateLeaders()
-    {
-        Leader playerLeaderData = new Leader("Napoleon", "Emperador de francia", 10, Resources.Load<Sprite>("Images/leader1"));
-        GameObject playerLeaderObject = Instantiate(leaderPrefab, playerLeaderSlot.transform);
-        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(playerLeaderData);
-        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(playerLeaderData);
-        playerLeader = playerLeaderObject;
-
-        Leader enemyLeaderData = new Leader("Julius", "Emperador de roma", 10, Resources.Load<Sprite>("Images/leader1"));
-        GameObject enemyLeaderObject = Instantiate(leaderPrefab, enemyLeaderSlot.transform);
-        enemyLeaderObject.GetComponent<LeaderController>().SetLeaderData(enemyLeaderData);
-        enemyLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(enemyLeaderData);
-        enemyLeader = enemyLeaderObject;
-    }
-
-    void CreateCards()
-    {
-        playerDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        playerDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
-        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        playerDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-
-        enemyDeck.AddCard(new Card(1, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        enemyDeck.AddCard(new Card(2, "Caballero", "Caballero de la francia medieval", Resources.Load<Sprite>("Images/caballero_frances"), 4, 4, 4));
-        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-        enemyDeck.AddCard(new Card(3, "Gladiador", "Gladiador del coliseo romano", Resources.Load<Sprite>("Images/gladiador"), 5, 6, 3));
-    }
-
     void ShuffleDecks()
     {
         playerDeck.ShuffleDeck();
@@ -186,5 +180,71 @@ public class GameManager : MonoBehaviour
             Debug.Log("No more cards in the deck!");
         }
     }
+
+
+    GameObject CreateLeader(LeaderData leader, GameObject slot)
+    {
+        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Cards/emiliano_zapata"));
+        GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
+        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
+        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(leaderData);
+        return playerLeaderObject;
+    }
+
+    void CreateCards()
+    {
+        StartCoroutine(GetDeckCards("decks/2/", playerDeck, "player"));
+        StartCoroutine(GetDeckCards("decks/3/", enemyDeck, "enemy"));
+    }
+
+    IEnumerator GetDeckCards(string endpoint, Deck deck, string player)
+    {
+        yield return StartCoroutine(SendGetRequest(endpoint));
+
+        if (data != null)
+        {
+            DeckData deckData = JsonConvert.DeserializeObject<DeckData>(data);
+
+            foreach (CardData card in deckData.cards)
+            {
+                deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/Cards/gladiador"), card.health, card.attack, card.cost));
+                Debug.Log(card.name);
+            }
+
+            if (player == "player")
+            {
+                playerLeader = CreateLeader(deckData.leader, playerLeaderSlot);
+            }
+            else
+            {
+                enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot);
+            }
+
+        }
+
+
+    }
+
+    public IEnumerator SendGetRequest(string endpoint)
+    {
+        UnityWebRequest www = UnityWebRequest.Get(apiURL + endpoint);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log($"Request failed: {www.error}");
+
+            if (!string.IsNullOrEmpty(www.downloadHandler.text))
+            {
+                Debug.LogError($"Error message: {www.downloadHandler.text}");
+            }
+        }
+        else
+        {
+            data = www.downloadHandler.text;
+        }
+    }
+
+
 
 }

@@ -178,13 +178,42 @@ app.get("/api/decks/:id", async (request, response) => {
   try {
     connection = await connectToDB();
 
-    const [results, fields] = await connection.execute("SELECT * FROM deck WHERE deck_id = ?", [request.params.id]);
+    const [results, fields] = await connection.execute(`
+      SELECT d.deck_id, d.name AS deck_name, d.description, d.nation,
+             c.card_id, c.name AS card_name, c.attack, c.health, c.basic_attack, c.cost, c.nation AS card_nation,
+             l.leader_id, l.name AS leader_name, l.ability_name AS leader_ability_name
+      FROM deck d
+      LEFT JOIN card c ON d.deck_id = c.deck_id
+      LEFT JOIN leader l ON d.deck_id = l.deck_id
+      WHERE d.deck_id = ?
+    `, [request.params.id]);
 
     if (results.length === 0) {
       return response.status(404).json({ error: "No se encontró ningun deck con el ID proporcionado" });
     }
 
-    response.status(200).json(results[0]);
+    const deck = {
+      deck_id: results[0].deck_id,
+      name: results[0].deck_name,
+      description: results[0].description,
+      nation: results[0].nation,
+      leader: {
+        leader_id: results[0].leader_id,
+        name: results[0].leader_name,
+        ability_name: results[0].leader_ability_name
+      },
+      cards: results.map(row => ({
+        card_id: row.card_id,
+        name: row.card_name,
+        attack: row.attack,
+        health: row.health,
+        basic_attack: row.basic_attack,
+        cost: row.cost,
+        nation: row.nation
+      })).filter(card => card.card_id)
+    };
+
+    response.status(200).json(deck);
   }
   catch (error) {
     response.status(500);

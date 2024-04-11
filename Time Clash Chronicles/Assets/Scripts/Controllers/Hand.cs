@@ -19,8 +19,8 @@ public class Hand : MonoBehaviour
 
             GameObject cardObject = Instantiate(cardPrefab, emptySlot.transform);
             cardObject.GetComponent<CardDisplay>().LoadCard(card);
-            cardObject.GetComponent<CardController>().SetCardData(card);
             cardObject.GetComponent<CardController>().owner = owner;
+            cardObject.GetComponent<CardController>().SetCardData(card);
         }
     }
 
