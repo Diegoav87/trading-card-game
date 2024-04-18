@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class HandSlot : MonoBehaviour
 {
-    void SetCard(GameObject card)
+    public bool HasCard()
     {
-        card.transform.SetParent(transform);
+        return transform.childCount != 0;
     }
 }

@@ -56,7 +56,7 @@ app.get("/api/cards/:id", async (request, response) => {
       return response.status(404).json({ error: "No se encontró ninguna carta con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    response.status(200).json(results[0]);
   }
   catch (error) {
     response.status(500);
@@ -73,7 +73,8 @@ app.get("/api/cards/:id", async (request, response) => {
 });
 
 app.post("/api/players", [
-  body('name').notEmpty().withMessage('Name cannot be empty'),
+  body('username').notEmpty().withMessage('Username cannot be empty'),
+  body('password').notEmpty().withMessage("Password can't be empty")
 ], async (request, response) => {
   let connection = null;
 
@@ -88,8 +89,8 @@ app.post("/api/players", [
     const playerData = request.body;
 
     const [results, fields] = await connection.execute(
-      "INSERT INTO player (name) VALUES (?)",
-      [playerData.name]
+      "INSERT INTO player (username, password) VALUES (?, ?)",
+      [playerData.username, playerData.password]
     );
 
     response.status(200).json({ message: "Jugador creado exitosamente" });
@@ -104,6 +105,44 @@ app.post("/api/players", [
   }
 });
 
+app.post("/api/login", [
+  body('username').notEmpty().withMessage('Username cannot be empty'),
+  body('password').notEmpty().withMessage("Password can't be empty")
+], async (request, response) => {
+
+  let connection = null;
+
+  try {
+    connection = await connectToDB();
+
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+
+    const { username, password } = request.body;
+
+    const [results, fields] = await connection.execute('SELECT * FROM player WHERE username = ?', [username]);
+
+    if (results.length === 0) {
+      return response.status(401).json({ error: "Nombre de usuario inválido" });
+    }
+
+    const player = results[0];
+
+    if (password != player.password) {
+      return response.status(401).send('Contraseña inválida');
+    }
+
+
+    response.status(200).json(player);
+  } catch (error) {
+    console.error('Error logging in:', error);
+    response.status(500).send('Error logging in');
+  }
+});
+
+
 app.get("/api/players/:id", async (request, response) => {
   let connection = null;
 
@@ -116,7 +155,7 @@ app.get("/api/players/:id", async (request, response) => {
       return response.status(404).json({ error: "No se encontró ningun jugador con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    response.status(200).json(results[0]);
   }
   catch (error) {
     response.status(500);
@@ -139,13 +178,42 @@ app.get("/api/decks/:id", async (request, response) => {
   try {
     connection = await connectToDB();
 
-    const [results, fields] = await connection.execute("SELECT * FROM deck WHERE deck_id = ?", [request.params.id]);
+    const [results, fields] = await connection.execute(`
+      SELECT d.deck_id, d.name AS deck_name, d.description, d.nation,
+             c.card_id, c.name AS card_name, c.attack, c.health, c.basic_attack, c.cost, c.nation AS card_nation,
+             l.leader_id, l.name AS leader_name, l.ability_name AS leader_ability_name
+      FROM deck d
+      LEFT JOIN card c ON d.deck_id = c.deck_id
+      LEFT JOIN leader l ON d.deck_id = l.deck_id
+      WHERE d.deck_id = ?
+    `, [request.params.id]);
 
     if (results.length === 0) {
       return response.status(404).json({ error: "No se encontró ningun deck con el ID proporcionado" });
     }
 
-    response.status(200).json(results);
+    const deck = {
+      deck_id: results[0].deck_id,
+      name: results[0].deck_name,
+      description: results[0].description,
+      nation: results[0].nation,
+      leader: {
+        leader_id: results[0].leader_id,
+        name: results[0].leader_name,
+        ability_name: results[0].leader_ability_name
+      },
+      cards: results.map(row => ({
+        card_id: row.card_id,
+        name: row.card_name,
+        attack: row.attack,
+        health: row.health,
+        basic_attack: row.basic_attack,
+        cost: row.cost,
+        nation: row.nation
+      })).filter(card => card.card_id)
+    };
+
+    response.status(200).json(deck);
   }
   catch (error) {
     response.status(500);

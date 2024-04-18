@@ -51,10 +51,10 @@ INSERT INTO deck (deck_id, name, description, nation) VALUES
     (5, 'Deck Italia', 'Deck de cartas de Italia', 'Italia');
 
 
-INSERT INTO player (player_id, name, wins, loses) VALUES
-(1, 'Diego', 0, 0),
-(2, 'Andres', 0, 0),
-(3, 'Isaac', 0, 0);
+INSERT INTO player (player_id, username, password, wins, loses) VALUES
+(1, 'Diego', "123", 0, 0),
+(2, 'Andres', "123", 0, 0),
+(3, 'Isaac', "123", 0, 0);
 
 INSERT INTO arena (arena_id, name, nation) VALUES
 (1, "Bosque de las Ardenas", "Francia"),
@@ -70,23 +70,23 @@ INSERT INTO leader (leader_id, name, ability_name, leader_ability_id, deck_id) V
     (4, 'Oda Nobuna', 'El Rey Demonio', 4, 4),
     (5, 'Julio César', 'Testudinum Formate', 5, 5);
 
-INSERT INTO ability (ability_id, name, cost, type) VALUES
-    (1, 'Providencia', 0, 'Pasiva'),
-    (2, 'Agua bendita', 2, 'Activa'),
-    (3, 'Inspiración Literaria', 3, 'Activa'),
-    (4, 'Coman pastel!', 3, 'Activa'),
-    (5, 'Grito de Libertad', 0, 'Activa'),
-    (6, 'Embargo', 5, 'Activa'),
-    (7, 'Riqueza abrumadora', 0, 'Pasiva'),
-    (8, 'Línea de Ensamblaje', 0, 'Pasiva'),
-    (9, 'Medicina Ancestral', 1, 'Activa'),
-    (10, 'Corte eléctrico', 3, 'Activa'),
-    (11, 'Emancipación', 3, 'Activa'),
-    (12, 'Fuerza Rebelde', 3, 'Activa'),
-    (13, 'Camino Samurai', 0, 'Pasiva'),
-    (14, 'Camino del Perdedor', 0, 'Pasiva'),
-    (15, 'Renacimiento', 0, 'Pasiva'),
-    (16, 'Orgullo', 0, 'Pasiva');
+INSERT INTO ability (ability_id, name, descripton, cost, type) VALUES
+    (1, 'Providencia','Al atacar directamente al líder contrario, se roba 1 moneda de oro.' ,0, 'Pasiva'),
+    (2, 'Agua bendita','Cura 2 puntos de vida de una carta seleccionada.', 2, 'Activa'),
+    (3, 'Inspiración Literaria','Una de tus cartas francesa obtiene un bonus de 3 a su ataque y puntos de vida.', 3, 'Activa'),
+    (4, 'Coman pastel!', 'Selecciona una carta enemiga para evitar que ataque por un turno.' 3, 'Activa'),
+    (5, 'Grito de Libertad', 'Inflige daño a una carta enemiga.', 0, 'Activa'),
+    (6, 'Riqueza abrumadora','Rockefeller gana 1 de daño por cada 2 monedas de oro que posea el jugador.',0, 'Pasiva'),
+    (7, 'Línea de Ensamblaje','Genera 2 de oro adicional por cada turno que esté Henry invocado en el campo.', 0, 'Pasiva'),
+    (8, 'Medicina Ancestral', 'Cura una carta aliada por 3 puntos.', 1, 'Activa'),
+    (9, 'Corte eléctrico','Benjamin franklin causa una explosión eléctrica que le hace un daño de 2 a todas las cartas enemigas.',3, 'Activa'),
+    (10, 'Emancipación', 'Reduce 3 puntos de ataque de una carta enemiga durante un turno.', 3, 'Activa'),
+    (11, 'Fuerza Rebelde','le otorga robo de vida de 2 puntos a una carta por los próximos 3 turnos.',  3, 'Activa'),
+    (12, 'Camino Samurai','Cada vez que Musashi destruye una carta enemiga, aumenta su daño en 1.', 0, 'Pasiva'),
+    (13, 'Camino del Perdedor', 'Cada vez que es atacado, Sasaki gana 2 puntos de ataque.',  0, 'Pasiva'),
+    (14, 'Renacimiento', 'Todas las cartas aliadas adquieren 2 punto de vida extra mientras Leonardo esté en el campo.',  0, 'Pasiva'),
+    (15, 'Orgullo', 0, 'Flamma gana 1 punto de vida por cada carta enemiga destruida.',  'Pasiva');
+    (16, 'Rescate', 'Selecciona una carta aliada para restaurar 3 puntos de vida.',0, 'Activa')
 
 INSERT INTO leader_ability (leader_ability_id, name, cost, cooldown) VALUES
     (1, 'Embargo', 5, 3),

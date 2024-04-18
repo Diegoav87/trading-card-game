@@ -20,14 +20,15 @@ public class ArenaSlot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!HasCard())
+        GameObject droppedCard = eventData.pointerDrag;
+        CardController cardController = droppedCard.GetComponent<CardController>();
+        CardDragDrop cardDrag = droppedCard.GetComponent<CardDragDrop>();
+
+        if (!HasCard() && cardController.CanInvoke())
         {
-            GameObject dropped = eventData.pointerDrag;
-            CardDragDrop draggableCard = dropped.GetComponent<CardDragDrop>();
-
-
-            draggableCard.parentAfterDrag = transform;
-            SetCard(dropped);
+            cardDrag.parentAfterDrag = transform;
+            SetCard(droppedCard);
+            cardController.InvokeCard();
         }
 
     }
