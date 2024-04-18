@@ -14,7 +14,7 @@ async function connectToDB() {
   return await mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "17June22!",
+    password: "diego",
     database: "time_clash_chronicles",
   });
 }

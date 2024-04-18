@@ -17,15 +17,20 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     int health;
     int cost;
 
+    int attack;
+
     ArenaManager arenaManager;
 
-    public bool hasAttacked = false;
+    public bool hasAttacked;
+    public bool hasUsedAbility;
 
 
     void Start()
     {
         selectionHighlight.enabled = false;
         arenaManager = FindObjectOfType<ArenaManager>();
+        hasAttacked = false;
+        hasUsedAbility = false;
     }
 
     public void SetCardData(Card card)
@@ -33,6 +38,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         cardData = card;
         health = cardData.health;
         cost = cardData.cost;
+        attack = cardData.attack;
         string cardTag = owner == "player" ? "PlayerCard" : "EnemyCard";
         gameObject.tag = cardTag;
     }
@@ -41,50 +47,53 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         if (GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase)
         {
-            if (!arenaManager.selectedAttacker)
+            if (AbilityManager.Instance.isHealingAbilityActive)
             {
-
-                if (CanSelect())
-                {
-                    SelectCard();
-
-                    if (arenaManager.selectedAttacker.tag == "PlayerCard")
-                    {
-                        if (arenaManager.EnemySlotsAreEmpty())
-                        {
-                            GameManager.Instance.enemyLeader.GetComponent<LeaderController>().HilightLeader();
-                        }
-                    }
-                    else
-                    {
-                        if (arenaManager.PlayerSlotsAreEmpty())
-                        {
-                            GameManager.Instance.playerLeader.GetComponent<LeaderController>().HilightLeader();
-                        }
-                    }
-                }
-
-
-
-
+                HandleHealingAbility();
             }
             else
             {
-                if (arenaManager.selectedAttacker == this)
+
+                if (AbilityManager.Instance.isIncreaseDamageAbilityActive)
                 {
+                    HandleIncreaseDamageAbility();
+                }
+                else
+                {
+                    HandleCardSelection();
 
-                    if (tag == "PlayerCard")
-                    {
-                        GameManager.Instance.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
-                    }
-                    else
-                    {
-                        GameManager.Instance.playerLeader.GetComponent<LeaderController>().RemoveHiglight();
-                    }
+                }
 
-                    DeselectCard();
+            }
 
 
+        }
+
+
+    }
+
+    void HandleCardSelection()
+    {
+        if (!arenaManager.selectedAttacker)
+        {
+
+            if (CanSelect())
+            {
+                SelectCard();
+                HighlightTargetCards();
+            }
+        }
+        else
+        {
+            if (arenaManager.selectedAttacker == this)
+            {
+                RemoveHighlightsAndDeselectCard();
+            }
+            else
+            {
+                if (arenaManager.selectedAttacker.tag == tag)
+                {
+                    Debug.Log("You can't attack allies");
                 }
                 else
                 {
@@ -92,10 +101,71 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
                 }
 
+
             }
+
+        }
+    }
+
+    void RemoveHighlightsAndDeselectCard()
+    {
+        if (tag == "PlayerCard")
+        {
+            GameManager.Instance.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
+            arenaManager.RemoveEnemyCardHighlights();
+        }
+        else
+        {
+            GameManager.Instance.playerLeader.GetComponent<LeaderController>().RemoveHiglight();
+            arenaManager.RemovePlayerCardHighlights();
         }
 
+        DeselectCard();
+    }
 
+    void HandleHealingAbility()
+    {
+        if ((tag == "PlayerCard" && GameManager.Instance.currentPlayer == "player") ||
+            (tag == "EnemyCard" && GameManager.Instance.currentPlayer == "enemy"))
+        {
+            UpdateHealth(3);
+            arenaManager.RemoveEnemyCardHighlights();
+            arenaManager.RemovePlayerCardHighlights();
+            arenaManager.selectedAttacker.DeselectCard();
+            AbilityManager.Instance.isHealingAbilityActive = false;
+        }
+    }
+
+    void HandleIncreaseDamageAbility()
+    {
+        if ((tag == "PlayerCard" && GameManager.Instance.currentPlayer == "player") ||
+            (tag == "EnemyCard" && GameManager.Instance.currentPlayer == "enemy"))
+        {
+            UpdateAttack(3);
+            arenaManager.RemoveEnemyCardHighlights();
+            arenaManager.RemovePlayerCardHighlights();
+            arenaManager.selectedAttacker.DeselectCard();
+            AbilityManager.Instance.isIncreaseDamageAbilityActive = false;
+        }
+    }
+
+
+    private void HighlightTargetCards()
+    {
+        if (tag == "PlayerCard")
+        {
+            if (arenaManager.EnemySlotsAreEmpty())
+                GameManager.Instance.enemyLeader.GetComponent<LeaderController>().HilightLeader();
+            else
+                arenaManager.HighlightEnemyCards();
+        }
+        else
+        {
+            if (arenaManager.PlayerSlotsAreEmpty())
+                GameManager.Instance.playerLeader.GetComponent<LeaderController>().HilightLeader();
+            else
+                arenaManager.HighlightPlayerCards();
+        }
     }
 
     public void AttackCard(CardController target)
@@ -109,12 +179,9 @@ public class CardController : MonoBehaviour, IPointerClickHandler
             else
             {
                 int prevHealth = target.cardData.health;
-                health = health - arenaManager.selectedAttacker.cardData.attack;
+                target.UpdateHealth(-arenaManager.selectedAttacker.attack);
 
-                Debug.Log("Attack: " + arenaManager.selectedAttacker.cardData.attack + ", Target Health: " + prevHealth + " -> " + health);
-
-                target.health = health;
-                target.UpdateHealthText();
+                Debug.Log("Attack: " + arenaManager.selectedAttacker.attack + ", Target Health: " + prevHealth + " -> " + health);
 
                 if (health <= 0)
                 {
@@ -122,6 +189,16 @@ public class CardController : MonoBehaviour, IPointerClickHandler
                 }
 
                 arenaManager.selectedAttacker.hasAttacked = true;
+
+                if (arenaManager.selectedAttacker.tag == "PlayerCard")
+                {
+                    arenaManager.RemoveEnemyCardHighlights();
+                }
+                else
+                {
+                    arenaManager.RemovePlayerCardHighlights();
+                }
+
                 arenaManager.selectedAttacker.DeselectCard();
 
             }
@@ -198,12 +275,34 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         arenaManager.SetSelectedAttacker(this);
         selectionHighlight.enabled = true;
+
+        if (cardData.ability != null && !hasUsedAbility)
+        {
+            GameManager.Instance.activateAbilityButton.interactable = true;
+        }
     }
 
     public void DeselectCard()
     {
         arenaManager.SetSelectedAttacker(null);
         selectionHighlight.enabled = false;
+
+        if (cardData.ability != null)
+        {
+            GameManager.Instance.activateAbilityButton.interactable = false;
+        }
+    }
+
+    public void UpdateHealth(int amount)
+    {
+        health += amount;
+        UpdateHealthText();
+    }
+
+    public void UpdateAttack(int amount)
+    {
+        attack += amount;
+        UpdateAttackText();
     }
 
     public void UpdateHealthText()
@@ -214,13 +313,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    void ResetHealth()
+    public void UpdateAttackText()
     {
-        UpdateHealthText();
-    }
-
-    void OnDisable()
-    {
-        ResetHealth();
+        if (attackText != null)
+        {
+            attackText.text = attack.ToString();
+        }
     }
 }
