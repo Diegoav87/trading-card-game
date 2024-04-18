@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     {
         DrawPhase,
         MainPhase,
-        EndPhase
     }
 
     string apiURL = "http://localhost:5000/api/";
@@ -31,6 +30,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject enemyLeaderSlot;
     [SerializeField] GameObject leaderPrefab;
     [SerializeField] GameObject cardPrefab;
+
+    public Button activateAbilityButton;
 
     [HideInInspector] public GameObject playerLeader;
     [HideInInspector] public GameObject enemyLeader;
@@ -62,35 +63,48 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
-        CreateCards();
-        ShuffleDecks();
+        activateAbilityButton.onClick.AddListener(ActivateAbilityButtonClicked);
+        endTurnButton.onClick.AddListener(EndTurnButtonClicked);
 
-        StartCoroutine(InitialDraw());
+        endTurnButton.interactable = false;
+        activateAbilityButton.interactable = false;
+
+        StartCoroutine(CreateAndShuffleDecks());
+    }
+
+    void ActivateAbilityButtonClicked()
+    {
+        HandleAbilityActivation();
+    }
+
+    private void HandleAbilityActivation()
+    {
+        if (ArenaManager.Instance.selectedAttacker != null && !ArenaManager.Instance.selectedAttacker.hasUsedAbility)
+        {
+            if (ArenaManager.Instance.selectedAttacker.cardData.ability != null)
+            {
+                AbilityManager.Instance.ActivateAbility(ArenaManager.Instance.selectedAttacker.cardData.ability, ArenaManager.Instance.selectedAttacker);
+                ArenaManager.Instance.selectedAttacker.hasUsedAbility = true;
+            }
+            else
+            {
+                Debug.LogWarning("No ability assigned to this card.");
+            }
+        }
+    }
+
+    IEnumerator CreateAndShuffleDecks()
+    {
+        yield return StartCoroutine(GetDeckCards("decks/2/", playerDeck, "player"));
+        yield return StartCoroutine(GetDeckCards("decks/3/", enemyDeck, "enemy"));
+
+        ShuffleDecks();
 
         currentPlayer = Random.value < 0.5f ? "player" : "enemy";
 
-        endTurnButton.onClick.AddListener(EndTurnButtonClicked);
+        StartCoroutine(InitialDraw());
     }
 
-    IEnumerator StartTurn()
-    {
-        // Draw phase
-        currentTurnState = TurnState.DrawPhase;
-        Debug.Log("Draw Phase");
-        yield return DrawPhase();
-
-        // Main phase
-        currentTurnState = TurnState.MainPhase;
-        Debug.Log("Main Phase");
-        yield return MainPhase();
-
-        arenaManager.ResetEnemyAttacks();
-        arenaManager.ResetPlayerAttacks();
-
-        SwitchTurn();
-
-        StartCoroutine(StartTurn());
-    }
 
     void SwitchTurn()
     {
@@ -117,8 +131,8 @@ public class GameManager : MonoBehaviour
         playerCoins.UpdateHealthText();
         enemyCoins.UpdateHealthText();
 
-
-        StartCoroutine(StartTurn());
+        currentTurnState = TurnState.DrawPhase;
+        StartCoroutine(DrawPhase());
     }
 
     IEnumerator DrawPhase()
@@ -141,25 +155,20 @@ public class GameManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-    }
 
-    IEnumerator MainPhase()
-    {
-        Debug.Log($"Entering {currentPlayer}'s Main Phase");
-
-        while (currentTurnState == TurnState.MainPhase)
-        {
-            yield return null;
-        }
+        currentTurnState = TurnState.MainPhase;
+        endTurnButton.interactable = true;
     }
 
 
     public void EndTurnButtonClicked()
     {
-        if (currentTurnState == TurnState.MainPhase)
-        {
-            currentTurnState = TurnState.EndPhase;
-        }
+        SwitchTurn();
+        arenaManager.ResetEnemyAttacks();
+        arenaManager.ResetPlayerAttacks();
+        currentTurnState = TurnState.DrawPhase;
+        endTurnButton.interactable = false;
+        StartCoroutine(DrawPhase());
     }
 
     void ShuffleDecks()
@@ -191,11 +200,7 @@ public class GameManager : MonoBehaviour
         return playerLeaderObject;
     }
 
-    void CreateCards()
-    {
-        StartCoroutine(GetDeckCards("decks/2/", playerDeck, "player"));
-        StartCoroutine(GetDeckCards("decks/3/", enemyDeck, "enemy"));
-    }
+
 
     IEnumerator GetDeckCards(string endpoint, Deck deck, string player)
     {
@@ -207,7 +212,7 @@ public class GameManager : MonoBehaviour
 
             foreach (CardData card in deckData.cards)
             {
-                deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/Cards/gladiador"), card.health, card.attack, card.cost));
+                deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/Cards/gladiador"), card.health, card.attack, card.cost, new IncreaseAllDamage()));
                 Debug.Log(card.name);
             }
 
