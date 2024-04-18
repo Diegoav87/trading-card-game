@@ -13,7 +13,9 @@ public class Card
     public int attack;
     public int cost;
 
-    public Card(int Id, string Name, Sprite Image, int Health, int Attack, int Cost)
+    public CardAbility ability;
+
+    public Card(int Id, string Name, Sprite Image, int Health, int Attack, int Cost, CardAbility Ability)
     {
         id = Id;
         name = Name;
@@ -21,5 +23,6 @@ public class Card
         health = Health;
         attack = Attack;
         cost = Cost;
+        ability = Ability;
     }
 }

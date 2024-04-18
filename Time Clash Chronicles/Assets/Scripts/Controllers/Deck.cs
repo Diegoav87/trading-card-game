@@ -18,6 +18,9 @@ public class Deck : MonoBehaviour
 
     public void ShuffleDeck()
     {
+        int seed = (int)System.DateTime.Now.Ticks;
+        Random.InitState(seed);
+
         for (int i = cards.Count - 1; i > 0; i--)
         {
 
