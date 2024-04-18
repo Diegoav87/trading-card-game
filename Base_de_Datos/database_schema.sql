@@ -88,6 +88,7 @@ CREATE TABLE game (
 CREATE TABLE ability (
     ability_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
     cost INT UNSIGNED NOT NULL,
     type VARCHAR(10) NOT NULL,
     PRIMARY KEY (ability_id)
