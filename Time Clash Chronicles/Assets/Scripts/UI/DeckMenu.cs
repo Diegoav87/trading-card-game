@@ -80,7 +80,7 @@ public class DeckSelectManager : MonoBehaviour
                 string json = request.downloadHandler.text;
                 currentDeckData = JsonConvert.DeserializeObject<DeckData>(json);
                 PopulateDeckCards();
-                deckSelectionMenu.SetActive(false); // Hide deck selection menu
+                deckSelectionMenu.SetActive(false);
             }
         }
     }
