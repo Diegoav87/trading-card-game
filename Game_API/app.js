@@ -330,9 +330,25 @@ app.get("/api/decks", async (request, response) => {
   try {
     connection = await connectToDB();
 
-    const [results, fields] = await connection.execute("SELECT * FROM deck");
+    const [results, fields] = await connection.execute(`
+      SELECT d.*, l.leader_id, l.name AS leader_name, l.ability_name AS leader_ability_name
+      FROM deck d
+      LEFT JOIN leader l ON d.deck_id = l.deck_id
+    `);
 
-    response.status(200).json(results);
+    const decks = results.map(row => ({
+      deck_id: row.deck_id,
+      name: row.name,
+      description: row.description,
+      nation: row.nation,
+      leader: row.leader_id ? {
+        leader_id: row.leader_id,
+        name: row.leader_name,
+        ability_name: row.leader_ability_name
+      } : null
+    }));
+
+    response.status(200).json(decks);
   } catch (error) {
     response.status(500);
     response.json(error);
