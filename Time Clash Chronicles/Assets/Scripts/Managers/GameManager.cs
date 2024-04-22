@@ -7,6 +7,7 @@ using TMPro;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 
+using System;
 
 
 public class GameManager : MonoBehaviour
@@ -16,9 +17,6 @@ public class GameManager : MonoBehaviour
         DrawPhase,
         MainPhase,
     }
-
-    string apiURL = "http://localhost:5000/api/";
-    string data;
 
     public static GameManager Instance { get; private set; }
     [SerializeField] Deck playerDeck;
@@ -93,14 +91,70 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    GameObject CreateLeader(LeaderData leader, GameObject slot)
+    {
+        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
+        GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
+        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
+        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(leaderData);
+        return playerLeaderObject;
+    }
+
+    void CreateDeck(DeckData deckData, string player, Deck deck)
+    {
+        foreach (CardData card in deckData.cards)
+        {
+            deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, new IncreaseAllDamage(), Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id)));
+
+        }
+
+        if (player == "player")
+        {
+            playerLeader = CreateLeader(deckData.leader, playerLeaderSlot);
+        }
+        else
+        {
+            enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot);
+        }
+    }
+
+    int GenerateRandomDeckId(int usedId)
+    {
+        List<int> availableDecks = new List<int>();
+
+        for (int i = 1; i <= 5; i++)
+        {
+            if (i != usedId)
+            {
+                availableDecks.Add(i);
+            }
+        }
+
+        int randomIndex = UnityEngine.Random.Range(0, availableDecks.Count);
+        int randomDeckNumber = availableDecks[randomIndex];
+        return randomDeckNumber;
+    }
+
     IEnumerator CreateAndShuffleDecks()
     {
-        yield return StartCoroutine(GetDeckCards("decks/2/", playerDeck, "player"));
-        yield return StartCoroutine(GetDeckCards("decks/3/", enemyDeck, "enemy"));
+        int deckId = PlayerPrefs.GetInt("SelectedPlayerDeck");
+
+        yield return StartCoroutine(APIManager.Instance.GetDeck("decks/" + deckId + "/", (deckData) =>
+        {
+            CreateDeck(deckData, "player", playerDeck);
+        }));
+
+        int randomDeckNumber = GenerateRandomDeckId(deckId);
+
+        yield return StartCoroutine(APIManager.Instance.GetDeck("decks/" + randomDeckNumber + "/", (deckData) =>
+        {
+            CreateDeck(deckData, "enemy", enemyDeck);
+        }));
+
 
         ShuffleDecks();
 
-        currentPlayer = Random.value < 0.5f ? "player" : "enemy";
+        currentPlayer = UnityEngine.Random.value < 0.5f ? "player" : "enemy";
 
         StartCoroutine(InitialDraw());
     }
@@ -128,8 +182,8 @@ public class GameManager : MonoBehaviour
 
         playerCoins.coins += 3;
         enemyCoins.coins += 3;
-        playerCoins.UpdateHealthText();
-        enemyCoins.UpdateHealthText();
+        playerCoins.UpdateCoinText();
+        enemyCoins.UpdateCoinText();
 
         currentTurnState = TurnState.DrawPhase;
         StartCoroutine(DrawPhase());
@@ -143,14 +197,14 @@ public class GameManager : MonoBehaviour
         {
             DrawCardToHand(playerDeck, playerHand, "player");
             playerCoins.coins += 3;
-            playerCoins.UpdateHealthText();
+            playerCoins.UpdateCoinText();
 
         }
         else
         {
             DrawCardToHand(enemyDeck, enemyHand, "enemy");
             enemyCoins.coins += 3;
-            enemyCoins.UpdateHealthText();
+            enemyCoins.UpdateCoinText();
 
         }
 
@@ -158,7 +212,35 @@ public class GameManager : MonoBehaviour
 
         currentTurnState = TurnState.MainPhase;
         endTurnButton.interactable = true;
+
+        if (currentPlayer == "enemy")
+        {
+            StartCoroutine(PlayEnemyTurn());
+        }
     }
+
+    IEnumerator PlayEnemyTurn()
+    {
+        yield return new WaitForSeconds(1f);
+
+        Tuple<Card, GameObject> selectedCardTuple = enemyHand.SelectCardFromEnemyHand();
+
+        if (selectedCardTuple != null)
+        {
+            Card selectedCard = selectedCardTuple.Item1;
+            GameObject selectedCardObject = selectedCardTuple.Item2;
+
+            arenaManager.InvokeCardIntoArena(selectedCardObject, selectedCard);
+
+            yield return new WaitForSeconds(1f);
+        }
+        else
+        {
+            EndTurnButtonClicked();
+        }
+    }
+
+
 
 
     public void EndTurnButtonClicked()
@@ -189,67 +271,6 @@ public class GameManager : MonoBehaviour
             Debug.Log("No more cards in the deck!");
         }
     }
-
-
-    GameObject CreateLeader(LeaderData leader, GameObject slot)
-    {
-        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Cards/emiliano_zapata"));
-        GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
-        playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
-        playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(leaderData);
-        return playerLeaderObject;
-    }
-
-
-
-    IEnumerator GetDeckCards(string endpoint, Deck deck, string player)
-    {
-        yield return StartCoroutine(SendGetRequest(endpoint));
-
-        if (data != null)
-        {
-            DeckData deckData = JsonConvert.DeserializeObject<DeckData>(data);
-
-            foreach (CardData card in deckData.cards)
-            {
-                deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/Cards/gladiador"), card.health, card.attack, card.cost, new IncreaseAllDamage()));
-                Debug.Log(card.name);
-            }
-
-            if (player == "player")
-            {
-                playerLeader = CreateLeader(deckData.leader, playerLeaderSlot);
-            }
-            else
-            {
-                enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot);
-            }
-
-        }
-
-
-    }
-
-    public IEnumerator SendGetRequest(string endpoint)
-    {
-        UnityWebRequest www = UnityWebRequest.Get(apiURL + endpoint);
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log($"Request failed: {www.error}");
-
-            if (!string.IsNullOrEmpty(www.downloadHandler.text))
-            {
-                Debug.LogError($"Error message: {www.downloadHandler.text}");
-            }
-        }
-        else
-        {
-            data = www.downloadHandler.text;
-        }
-    }
-
 
 
 }

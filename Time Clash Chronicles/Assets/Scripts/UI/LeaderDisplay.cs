@@ -10,12 +10,18 @@ public class LeaderDisplay : MonoBehaviour
 
     public Image imageSprite;
 
+    public Image flag;
+
+    public Image border;
+
 
     public void LoadLeader(Leader leader)
     {
         nameText.text = leader.name;
 
         imageSprite.sprite = leader.image;
+        flag.sprite = leader.flag;
+        border.sprite = leader.border;
     }
 
 

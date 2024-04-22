@@ -6,12 +6,22 @@ using Newtonsoft.Json;
 
 public class APIManager : MonoBehaviour
 {
+    public static APIManager Instance { get; private set; }
+
     string apiURL = "http://localhost:5000/api/";
     string data;
 
-    void Start()
+    private void Awake()
     {
-        // StartCoroutine(LoginPlayer("login/", new { username = "Diego", password = "123" }));
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public IEnumerator SendGetRequest(string endpoint)
@@ -98,33 +108,33 @@ public class APIManager : MonoBehaviour
 
     }
 
-    IEnumerator GetDecks(string endpoint)
+    public IEnumerator GetDecks(string endpoint, Action<DeckData[]> callback)
     {
         yield return StartCoroutine(SendGetRequest(endpoint));
 
+        DeckData[] decks = null;
+
         if (data != null)
         {
-            DeckData[] decks = JsonConvert.DeserializeObject<DeckData[]>(data);
-
-            foreach (DeckData deck in decks)
-            {
-                Debug.Log(deck.name);
-            }
+            decks = JsonConvert.DeserializeObject<DeckData[]>(data);
         }
 
-
+        callback?.Invoke(decks);
     }
 
-    IEnumerator GetDeck(string endpoint)
+    public IEnumerator GetDeck(string endpoint, Action<DeckData> callback)
     {
 
         yield return StartCoroutine(SendGetRequest(endpoint));
 
+        DeckData deck = null;
+
         if (data != null)
         {
-            DeckData deck = JsonConvert.DeserializeObject<DeckData>(data);
-            Debug.Log("Deck Name: " + deck.name);
+            deck = JsonConvert.DeserializeObject<DeckData>(data);
         }
+
+        callback?.Invoke(deck);
 
     }
 

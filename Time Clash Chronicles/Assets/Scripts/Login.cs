@@ -17,36 +17,20 @@ public class Login : MonoBehaviour
     public Button loginButton;
     public Button goToRegisterButton;
     string apiURL = "http://localhost:5000/api/";
-    string data;
 
 
-
-    // Start is called before the first frame update
     void Start()
     {
-        loginButton.onClick.AddListener(login);
-        // goToRegisterButton.onClick.AddListener(moveToRegister);
-
-       
-
+        loginButton.onClick.AddListener(LoginPlayer);
     }
 
 
-
-    // Update is called once per frame
-    void login()
+    void LoginPlayer()
     {
         Debug.Log($"Logging in '{usernameInput.text}'");
-        // loadWelcomeScreen();
 
-        StartCoroutine(LoginPlayer("login/", new { username = usernameInput.text , password = passwordInput.text }));
-        
-    }
-    
+        StartCoroutine(LoginPlayer("login/", new { username = usernameInput.text, password = passwordInput.text }));
 
-    void moveToRegister()
-    {
-        SceneManager.LoadScene("Register");
     }
 
 

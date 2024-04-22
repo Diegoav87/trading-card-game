@@ -12,6 +12,8 @@ public class CardDisplay : MonoBehaviour
     public TMP_Text costText;
     public Image imageSprite;
 
+    public Image flag;
+
 
     public void LoadCard(Card card)
     {
@@ -20,6 +22,7 @@ public class CardDisplay : MonoBehaviour
         attackText.text = card.attack.ToString();
         costText.text = card.cost.ToString();
         imageSprite.sprite = card.image;
+        flag.sprite = card.flag;
     }
 
 

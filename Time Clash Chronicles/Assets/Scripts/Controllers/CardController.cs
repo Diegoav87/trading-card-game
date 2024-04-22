@@ -262,12 +262,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         if (GameManager.Instance.currentPlayer == "player")
         {
             GameManager.Instance.playerCoins.coins -= cost;
-            GameManager.Instance.playerCoins.UpdateHealthText();
+            GameManager.Instance.playerCoins.UpdateCoinText();
         }
         else
         {
             GameManager.Instance.enemyCoins.coins -= cost;
-            GameManager.Instance.enemyCoins.UpdateHealthText();
+            GameManager.Instance.enemyCoins.UpdateCoinText();
         }
     }
 
