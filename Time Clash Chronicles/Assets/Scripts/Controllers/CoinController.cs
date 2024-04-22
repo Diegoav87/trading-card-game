@@ -13,7 +13,7 @@ public class CoinController : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI coinText;
 
-    public void UpdateHealthText()
+    public void UpdateCoinText()
     {
         coinText.text = coins.ToString();
     }

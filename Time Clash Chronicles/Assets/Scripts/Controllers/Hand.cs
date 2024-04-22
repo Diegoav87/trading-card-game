@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Hand : MonoBehaviour
 {
@@ -37,13 +38,26 @@ public class Hand : MonoBehaviour
         return null;
     }
 
+    public Tuple<Card, GameObject> SelectCardFromEnemyHand()
+    {
+        Tuple<Card, GameObject> selectedCardTuple = null;
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            Card card = cards[i];
+            if (GameManager.Instance.enemyCoins.coins >= card.cost)
+            {
+                GameObject cardObject = handSlots[i].GetComponentInChildren<CardController>().gameObject;
+                selectedCardTuple = Tuple.Create(card, cardObject);
+                break;
+            }
+        }
+
+        return selectedCardTuple;
+    }
+
     public void RemoveCard(Card card)
     {
         cards.Remove(card);
-    }
-
-    void ClearHand()
-    {
-        cards.Clear();
     }
 }

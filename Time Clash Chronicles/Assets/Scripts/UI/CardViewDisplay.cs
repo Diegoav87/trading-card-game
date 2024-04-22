@@ -12,11 +12,17 @@ public class CardViewDisplay : MonoBehaviour
     public TMP_Text attackText;
     public TMP_Text costText;
 
-    public void LoadCard(CardData cardData)
+    public Image image;
+
+    public Image flag;
+
+    public void LoadCard(CardData cardData, int leaderId)
     {
         nameText.text = cardData.name;
         healthText.text = cardData.health.ToString();
         attackText.text = cardData.attack.ToString();
         costText.text = cardData.cost.ToString();
+        image.sprite = Resources.Load<Sprite>("Images/CardsImages/" + cardData.card_id);
+        flag.sprite = Resources.Load<Sprite>("Images/Leaders/Flags/" + leaderId);
     }
 }
