@@ -10,6 +10,10 @@ public class Hand : MonoBehaviour
     [SerializeField] GameObject handSlotPrefab;
     [SerializeField] GameObject cardPrefab;
 
+
+
+    int handSize = 6;
+
     public void AddCard(Card card, string owner)
     {
         GameObject emptySlot = GetEmptySlot();
@@ -23,6 +27,11 @@ public class Hand : MonoBehaviour
             cardObject.GetComponent<CardController>().owner = owner;
             cardObject.GetComponent<CardController>().SetCardData(card);
         }
+    }
+
+    bool IsHandFull()
+    {
+        return cards.Count >= handSize;
     }
 
     GameObject GetEmptySlot()

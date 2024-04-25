@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour
 
     ArenaManager arenaManager;
 
+    EnemyAIManager enemyAIManager;
+
 
     private void Awake()
     {
@@ -61,6 +63,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
+        enemyAIManager = FindAnyObjectByType<EnemyAIManager>();
         activateAbilityButton.onClick.AddListener(ActivateAbilityButtonClicked);
         endTurnButton.onClick.AddListener(EndTurnButtonClicked);
 
@@ -75,7 +78,7 @@ public class GameManager : MonoBehaviour
         HandleAbilityActivation();
     }
 
-    private void HandleAbilityActivation()
+    public void HandleAbilityActivation()
     {
         if (ArenaManager.Instance.selectedAttacker != null && !ArenaManager.Instance.selectedAttacker.hasUsedAbility)
         {
@@ -83,6 +86,8 @@ public class GameManager : MonoBehaviour
             {
                 AbilityManager.Instance.ActivateAbility(ArenaManager.Instance.selectedAttacker.cardData.ability, ArenaManager.Instance.selectedAttacker);
                 ArenaManager.Instance.selectedAttacker.hasUsedAbility = true;
+                ArenaManager.Instance.selectedAttacker.DeselectCard();
+                ArenaManager.Instance.RemoveEnemyCardHighlights();
             }
             else
             {
@@ -211,7 +216,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         currentTurnState = TurnState.MainPhase;
-        endTurnButton.interactable = true;
+
+        if (currentPlayer == "player")
+        {
+            endTurnButton.interactable = true;
+        }
+
 
         if (currentPlayer == "enemy")
         {
@@ -219,28 +229,85 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
     IEnumerator PlayEnemyTurn()
     {
         yield return new WaitForSeconds(1f);
 
-        Tuple<Card, GameObject> selectedCardTuple = enemyHand.SelectCardFromEnemyHand();
+        float[] actionWeights = { 0.4f, 0.3f, 0.2f, 0.1f };
 
-        if (selectedCardTuple != null)
+        int numActions = 2;
+        // Debug.Log("Number of actions: " + numActions);
+
+        for (int i = 0; i < numActions; i++)
         {
-            Card selectedCard = selectedCardTuple.Item1;
-            GameObject selectedCardObject = selectedCardTuple.Item2;
+            int actionType = 2;
+            // int actionType = WeightedRandomIndex(actionWeights);
 
-            arenaManager.InvokeCardIntoArena(selectedCardObject, selectedCard);
+            // Debug.Log("Selected action: " + actionType);
+            // Debug.Log("Number of action: " + i);
+
+
+            if (ArenaManager.Instance.EnemySlotsAreEmpty())
+            {
+                enemyAIManager.InvokeCard();
+            }
+            else
+            {
+                switch (actionType)
+                {
+                    case 0:
+                        enemyAIManager.InvokeCard();
+                        break;
+                    case 1:
+                        StartCoroutine(enemyAIManager.ActivateAbility());
+                        break;
+                    case 2:
+                        enemyAIManager.AttackCard();
+                        break;
+                    case 3:
+                        EndTurnButtonClicked();
+                        yield break;
+                    default:
+                        break;
+
+                }
+            }
 
             yield return new WaitForSeconds(1f);
+
         }
-        else
-        {
-            EndTurnButtonClicked();
-        }
+
+        EndTurnButtonClicked();
+
+
     }
 
+    int WeightedRandomIndex(float[] weights)
+    {
+        float[] cumulativeProbabilities = new float[weights.Length];
+        float sum = 0f;
 
+        for (int i = 0; i < weights.Length; i++)
+        {
+            sum += weights[i];
+            cumulativeProbabilities[i] = sum;
+        }
+
+        float randomValue = UnityEngine.Random.Range(0f, sum);
+
+
+        for (int i = 0; i < cumulativeProbabilities.Length; i++)
+        {
+            if (randomValue < cumulativeProbabilities[i])
+            {
+                return i;
+            }
+        }
+
+        return weights.Length - 1;
+    }
 
 
     public void EndTurnButtonClicked()

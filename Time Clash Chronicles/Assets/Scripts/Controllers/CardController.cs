@@ -17,7 +17,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     int health;
     int cost;
 
-    int attack;
+    public int attack;
 
     ArenaManager arenaManager;
 
@@ -93,7 +93,9 @@ public class CardController : MonoBehaviour, IPointerClickHandler
             {
                 if (arenaManager.selectedAttacker.tag == tag)
                 {
-                    Debug.Log("You can't attack allies");
+                    arenaManager.selectedAttacker.DeselectCard();
+                    SelectCard();
+                    HighlightTargetCards();
                 }
                 else
                 {
@@ -217,10 +219,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         {
             return tag == "PlayerCard" && transform.parent.GetComponent<ArenaSlot>() != null;
         }
-        else
-        {
-            return tag == "EnemyCard" && transform.parent.GetComponent<ArenaSlot>() != null;
-        }
+
+        return false;
     }
 
     bool CanDrag()
@@ -229,10 +229,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         {
             return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "PlayerCard";
         }
-        else
-        {
-            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "EnemyCard";
-        }
+
+        return false;
     }
 
     bool HasEnoughCoinsToInvoke()
@@ -271,7 +269,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    void SelectCard()
+    public void SelectCard()
     {
         arenaManager.SetSelectedAttacker(this);
         selectionHighlight.enabled = true;
