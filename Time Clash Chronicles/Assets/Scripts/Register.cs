@@ -25,11 +25,9 @@ public class Register : MonoBehaviour
         goToLoginButton.onClick.AddListener(GoToLogin);
     }
 
-    IEnumerator CreatePlayer(string endpoint, object playerData)
+    void CreatePlayer(string endpoint, object playerData)
     {
-        yield return StartCoroutine(SendPostRequest(endpoint, playerData));
-
-
+        StartCoroutine(SendPostRequest(endpoint, playerData));
     }
 
     IEnumerator SendPostRequest(string endpoint, object data)
@@ -59,8 +57,7 @@ public class Register : MonoBehaviour
 
     void RegisterPlayer()
     {
-        StartCoroutine(CreatePlayer("players/", new { username = usernameInput.text, password = passwordInput.text }));
-
+        CreatePlayer("players/", new { username = usernameInput.text, password = passwordInput.text });
     }
 
     void GoToLogin()
