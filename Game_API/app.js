@@ -1,7 +1,7 @@
 "use strict";
 
 import { check, body, validationResult } from "express-validator";
-import express from "express";
+import express, { response } from "express";
 import mysql from "mysql2/promise"
 
 const app = express();
@@ -13,8 +13,8 @@ app.use(express.json());
 async function connectToDB() {
   return await mysql.createConnection({
     host: "localhost",
-    user: "root",
-    password: "diego",
+    user: "Gomesinho",
+    password: "06514766",
     database: "time_clash_chronicles",
   });
 }
@@ -228,7 +228,46 @@ app.get("/api/decks/:id", async (request, response) => {
     }
   }
 });
+app.get("/api/player/winrate", async (request, response) =>{
+  let connection = null;
 
+  try {
+    connection = await connectToDB();
+    const [results, fields] = await connection.execute("SELECT AVG(wins / (wins + loses)) * 100 AS winrate FROM player");
+
+    if (results.length === 0) {
+      return response.status(404).json({ error: "No existe información suficiente" });
+    }
+    response.status(200).json(results[0])
+    
+  }
+  catch (error) {
+    response.status(500);
+    response.json(error);
+    console.log(error);
+  }
+
+})
+app.get("/api/games/winrate", async (request, response) =>{
+  let connection = null;
+
+  try {
+    connection = await connectToDB();
+    const [results, fields] = await connection.execute("SELECT AVG(wins / (wins + loses)) * 100 AS winrate FROM player");
+
+    if (results.length === 0) {
+      return response.status(404).json({ error: "No existe información suficiente" });
+    }
+    response.status(200).json(results[0])
+    
+  }
+  catch (error) {
+    response.status(500);
+    response.json(error);
+    console.log(error);
+  }
+
+})
 app.post("/api/games", [
   body('player1_id').isInt({ min: 1 }).withMessage("El ID del jugador 1 debe ser un número entero positivo"),
   body('player2_id').isInt({ min: 1 }).withMessage("El ID del jugador 2 debe ser un número entero positivo"),
