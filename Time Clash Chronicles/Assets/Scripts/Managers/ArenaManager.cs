@@ -11,6 +11,9 @@ public class ArenaManager : MonoBehaviour
 
     [HideInInspector] public CardController selectedAttacker;
 
+    [SerializeField] Hand enemyHand;
+
+
     private void Awake()
     {
         if (Instance == null)
@@ -48,6 +51,8 @@ public class ArenaManager : MonoBehaviour
 
             GameManager.Instance.enemyCoins.coins -= card.cost;
             GameManager.Instance.enemyCoins.UpdateCoinText();
+
+            enemyHand.RemoveCard(card);
         }
     }
 
@@ -64,6 +69,49 @@ public class ArenaManager : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public ArenaSlot GetRandomOccupiedSlot(List<ArenaSlot> slots)
+    {
+        List<ArenaSlot> occupiedSlots = slots.Where(slot => slot.HasCard()).ToList();
+
+        if (occupiedSlots.Count > 0)
+        {
+            int randomIndex = Random.Range(0, occupiedSlots.Count);
+            return occupiedSlots[randomIndex];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public IEnumerator AttackPlayerCard()
+    {
+
+        ArenaSlot occupiedEnemySlot = GetRandomOccupiedSlot(enemySlots);
+        CardController enemyCardController = occupiedEnemySlot.GetComponentInChildren<CardController>();
+
+        selectedAttacker = enemyCardController;
+        enemyCardController.SelectCard();
+
+        yield return new WaitForSeconds(1f);
+
+        if (PlayerSlotsAreEmpty())
+        {
+            GameManager.Instance.playerLeader.GetComponent<LeaderController>().TakeDamage(selectedAttacker.attack);
+        }
+        else
+        {
+            ArenaSlot occupiedPlayerSlot = GetRandomOccupiedSlot(playerSlots);
+            CardController playerCardController = occupiedPlayerSlot.GetComponentInChildren<CardController>();
+
+
+            playerCardController.AttackCard(playerCardController);
+            enemyCardController.DeselectCard();
+        }
+
+
     }
 
     void HighlightCards(List<ArenaSlot> slots)

@@ -7,9 +7,12 @@ using UnityEngine.UI;
 public class LeaderController : MonoBehaviour, IPointerClickHandler
 {
     Leader leaderData;
-    int health;
+    float health;
+
+    float maxHealth;
 
     [SerializeField] Image leaderImage;
+    [SerializeField] Image healthBar;
 
     ArenaManager arenaManager;
 
@@ -22,6 +25,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     {
         leaderData = leader;
         health = leader.health;
+        maxHealth = leader.health;
     }
 
     public void HilightLeader()
@@ -53,7 +57,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                     if (arenaManager.EnemySlotsAreEmpty())
                     {
                         arenaManager.selectedAttacker.hasAttacked = true;
-                        TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+                        TakeDamage(arenaManager.selectedAttacker.attack);
 
 
                     }
@@ -63,7 +67,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                     if (arenaManager.PlayerSlotsAreEmpty())
                     {
                         arenaManager.selectedAttacker.hasAttacked = true;
-                        TakeDamage(arenaManager.selectedAttacker.cardData.attack);
+                        TakeDamage(arenaManager.selectedAttacker.attack);
 
                     }
                 }
@@ -75,7 +79,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         health -= damage;
 
@@ -86,5 +90,11 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
 
         RemoveHiglight();
         arenaManager.selectedAttacker.DeselectCard();
+        UpdateHealthBar();
+    }
+
+    void UpdateHealthBar()
+    {
+        healthBar.fillAmount = health / maxHealth;
     }
 }
