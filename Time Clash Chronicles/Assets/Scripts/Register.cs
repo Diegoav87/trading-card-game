@@ -16,26 +16,21 @@ public class Register : MonoBehaviour
     public TMP_InputField passwordInput;
     public Button registerButton;
     public Button goToLoginButton;
-      string apiURL = "http://localhost:5000/api/";
-    string data;
+    string apiURL = "http://localhost:5000/api/";
 
-    ArrayList credentials;
 
-    // Start is called before the first frame update
     void Start()
     {
-        registerButton.onClick.AddListener(writeStuffToFile);
-        goToLoginButton.onClick.AddListener(goToLoginScene);
+        registerButton.onClick.AddListener(RegisterPlayer);
+        goToLoginButton.onClick.AddListener(GoToLogin);
     }
 
-     IEnumerator CreatePlayer(string endpoint, object playerData)
+    void CreatePlayer(string endpoint, object playerData)
     {
-        yield return StartCoroutine(SendPostRequest(endpoint, playerData));
-
-            
+        StartCoroutine(SendPostRequest(endpoint, playerData));
     }
 
-      IEnumerator SendPostRequest(string endpoint, object data)
+    IEnumerator SendPostRequest(string endpoint, object data)
     {
         string jsonData = JsonConvert.SerializeObject(data);
 
@@ -59,14 +54,13 @@ public class Register : MonoBehaviour
         }
     }
 
-  
-    void writeStuffToFile()
+
+    void RegisterPlayer()
     {
-        StartCoroutine(CreatePlayer("players/", new { username = usernameInput.text , password = passwordInput.text }));
-        
+        CreatePlayer("players/", new { username = usernameInput.text, password = passwordInput.text });
     }
 
-      void goToLoginScene()
+    void GoToLogin()
     {
         SceneManager.LoadScene("Login1");
     }

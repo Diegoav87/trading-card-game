@@ -1,12 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 public class ArenaManager : MonoBehaviour
 {
+    public static ArenaManager Instance { get; private set; }
+
     public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
     public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
 
     [HideInInspector] public CardController selectedAttacker;
+
+    [SerializeField] Hand enemyHand;
+
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void SetSelectedAttacker(CardController attacker)
     {
@@ -19,6 +38,133 @@ public class ArenaManager : MonoBehaviour
             selectedAttacker = null;
         }
 
+    }
+
+    public void InvokeCardIntoArena(GameObject cardObject, Card card)
+    {
+        ArenaSlot randomSlot = GetRandomFreeSlot(enemySlots);
+
+        if (randomSlot != null)
+        {
+            cardObject.transform.SetParent(randomSlot.transform);
+            cardObject.transform.localPosition = Vector3.zero;
+
+            GameManager.Instance.enemyCoins.coins -= card.cost;
+            GameManager.Instance.enemyCoins.UpdateCoinText();
+
+            enemyHand.RemoveCard(card);
+        }
+    }
+
+    public ArenaSlot GetRandomFreeSlot(List<ArenaSlot> slots)
+    {
+        List<ArenaSlot> emptySlots = slots.Where(slot => !slot.HasCard()).ToList();
+
+        if (emptySlots.Count > 0)
+        {
+            int randomIndex = Random.Range(0, emptySlots.Count);
+            return emptySlots[randomIndex];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public ArenaSlot GetRandomOccupiedSlot(List<ArenaSlot> slots)
+    {
+        List<ArenaSlot> occupiedSlots = slots.Where(slot => slot.HasCard()).ToList();
+
+        if (occupiedSlots.Count > 0)
+        {
+            int randomIndex = Random.Range(0, occupiedSlots.Count);
+            return occupiedSlots[randomIndex];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public IEnumerator AttackPlayerCard()
+    {
+
+        ArenaSlot occupiedEnemySlot = GetRandomOccupiedSlot(enemySlots);
+        CardController enemyCardController = occupiedEnemySlot.GetComponentInChildren<CardController>();
+
+        selectedAttacker = enemyCardController;
+        enemyCardController.SelectCard();
+
+        yield return new WaitForSeconds(1f);
+
+        if (PlayerSlotsAreEmpty())
+        {
+            GameManager.Instance.playerLeader.GetComponent<LeaderController>().TakeDamage(selectedAttacker.attack);
+        }
+        else
+        {
+            ArenaSlot occupiedPlayerSlot = GetRandomOccupiedSlot(playerSlots);
+            CardController playerCardController = occupiedPlayerSlot.GetComponentInChildren<CardController>();
+
+
+            playerCardController.AttackCard(playerCardController);
+            enemyCardController.DeselectCard();
+        }
+
+
+    }
+
+    void HighlightCards(List<ArenaSlot> slots)
+    {
+        foreach (ArenaSlot slot in slots)
+        {
+            if (slot.HasCard())
+            {
+                CardDisplay cardUI = slot.GetComponentInChildren<CardDisplay>();
+
+                Color color = HexToColor("#FFB1B1");
+                cardUI.imageSprite.color = color;
+            }
+        }
+    }
+
+    void RemoveCardHighlights(List<ArenaSlot> slots)
+    {
+        foreach (ArenaSlot slot in slots)
+        {
+            if (slot.HasCard())
+            {
+                CardDisplay cardUI = slot.GetComponentInChildren<CardDisplay>();
+                cardUI.imageSprite.color = Color.white;
+            }
+        }
+    }
+
+    public void HighlightPlayerCards()
+    {
+        HighlightCards(playerSlots);
+    }
+
+    public void HighlightEnemyCards()
+    {
+        HighlightCards(enemySlots);
+    }
+
+    public void RemovePlayerCardHighlights()
+    {
+        RemoveCardHighlights(playerSlots);
+    }
+
+    public void RemoveEnemyCardHighlights()
+    {
+        RemoveCardHighlights(enemySlots);
+    }
+
+    Color HexToColor(string hex)
+    {
+        Color color = Color.white;
+        ColorUtility.TryParseHtmlString(hex, out color);
+        return color;
     }
 
     public bool SlotsAreEmpty(List<ArenaSlot> slots)

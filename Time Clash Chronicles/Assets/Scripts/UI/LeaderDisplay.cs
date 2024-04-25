@@ -7,17 +7,21 @@ using TMPro;
 public class LeaderDisplay : MonoBehaviour
 {
     public TMP_Text nameText;
-    public TMP_Text descriptionText;
-    public TMP_Text healthText;
+
     public Image imageSprite;
+
+    public Image flag;
+
+    public Image border;
 
 
     public void LoadLeader(Leader leader)
     {
-        // nameText.text = leader.name;
-        // descriptionText.text = leader.description;
-        // healthText.text = leader.health.ToString();
-        // imageSprite.sprite = leader.image;
+        nameText.text = leader.name;
+
+        imageSprite.sprite = leader.image;
+        flag.sprite = leader.flag;
+        border.sprite = leader.border;
     }
 
 

@@ -425,7 +425,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d92a2eff7dd3a9448b9e2efcdd382cff, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d79e879711fdb5447abcf2dd34503176, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -981,8 +981,10 @@ MonoBehaviour:
     health: 0
     attack: 0
     cost: 0
+    flag: {fileID: 0}
   owner: 
   hasAttacked: 0
+  hasUsedAbility: 0
 --- !u!114 &8316634530486625143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,6 +1002,7 @@ MonoBehaviour:
   attackText: {fileID: 5676109139926912792}
   costText: {fileID: 860433654372331270}
   imageSprite: {fileID: 6537603174553349007}
+  flag: {fileID: 4034106619350380631}
 --- !u!114 &3421511922599850087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1156,7 +1159,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d92a2eff7dd3a9448b9e2efcdd382cff, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 270b98bc9f7b78e4d9930fa4cad9aee5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
