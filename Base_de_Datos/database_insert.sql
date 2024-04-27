@@ -57,12 +57,12 @@ INSERT INTO player (player_id, username, password, wins, loses) VALUES
 (3, 'Isaac', "123", 0, 0);
 
 
-INSERT INTO leader (leader_id, name, ability_name, deck_id) VALUES
-    (1, 'Napoleón', 'Embargo', 1),
-    (2, 'George Washington', 'Impuestos', 2),
-    (3, 'Emiliano Zapata', 'Revolución', 3),
-    (4, 'Oda Nobuna', 'El Rey Demonio', 4),
-    (5, 'Julio César', 'Testudinum Formate', 5);
+INSERT INTO leader (leader_id, name, deck_id) VALUES
+    (1, 'Napoleón', 1),
+    (2, 'George Washington',  2),
+    (3, 'Emiliano Zapata', 3),
+    (4, 'Oda Nobuna', 4),
+    (5, 'Julio César',  5);
 
 INSERT INTO ability (ability_id, name, description, cost, type) VALUES
 
