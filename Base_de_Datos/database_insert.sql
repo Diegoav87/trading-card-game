@@ -56,21 +56,15 @@ INSERT INTO player (player_id, username, password, wins, loses) VALUES
 (2, 'Andres', "123", 0, 0),
 (3, 'Isaac', "123", 0, 0);
 
-INSERT INTO arena (arena_id, name, nation) VALUES
-(1, "Bosque de las Ardenas", "Francia"),
-(2, "El Gran Cañón", "Estados Unidos"),
-(3, "Pirámides de Teotihuacán", "México"),
-(4, "Monte Fuji", "Japón"),
-(5, "Coliseo Romano", "Italia");
 
-INSERT INTO leader (leader_id, name, ability_name, leader_ability_id, deck_id) VALUES
-    (1, 'Napoleón', 'Embargo', 1, 1),
-    (2, 'George Washington', 'Impuestos', 2, 2),
-    (3, 'Emiliano Zapata', 'Revolución', 3, 3),
-    (4, 'Oda Nobuna', 'El Rey Demonio', 4, 4),
-    (5, 'Julio César', 'Testudinum Formate', 5, 5);
+INSERT INTO leader (leader_id, name, ability_name, deck_id) VALUES
+    (1, 'Napoleón', 'Embargo', 1),
+    (2, 'George Washington', 'Impuestos', 2),
+    (3, 'Emiliano Zapata', 'Revolución', 3),
+    (4, 'Oda Nobuna', 'El Rey Demonio', 4),
+    (5, 'Julio César', 'Testudinum Formate', 5);
 
-INSERT INTO ability (ability_id, name, descripton, cost, type) VALUES
+INSERT INTO ability (ability_id, name, description, cost, type) VALUES
 
     (1, 'Curar',' Al ser invocada le sube la vida a las cartas de su pais que estan en la arena.' ,0, 'activa'),
     (2, 'Incrementa Daño, Daño',' Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.' ,0, 'activa'),
@@ -79,14 +73,19 @@ INSERT INTO ability (ability_id, name, descripton, cost, type) VALUES
     (5, 'Atacar Lider',' Al ser invocada  Las cartas en la arena atacan directamente a el lider.' ,0, 'activa');
   
 
-INSERT INTO leader_ability (leader_ability_id, name, cost, cooldown) VALUES
-    (1, 'Embargo', 5, 3),
-    (2, 'Impuestos', 2, 4),
-    (3, 'Revolución', 4, 3),
-    (4, 'El Rey Demonio', 3, 2),
-    (5, 'Testudinum Formate', 4, 4);
 
 
+INSERT INTO game (player_id, win, deck_id) VALUES
+    (1,0,2),
+    (1,0,2),
+    (2,0,2),
+    (2,1,2),
+    (3,0,2),
+    (1,1,2),
+    (3,0,2),
+    (1,1,2),
+    (3,1,2),
+    (2,0,2);
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
