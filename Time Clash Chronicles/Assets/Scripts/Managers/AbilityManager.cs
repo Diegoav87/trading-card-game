@@ -5,28 +5,18 @@ using UnityEngine.UI;
 
 public class AbilityManager : MonoBehaviour
 {
-    public static AbilityManager Instance { get; private set; }
-
-
     [HideInInspector] public bool isHealingAbilityActive;
 
     [HideInInspector] public bool isIncreaseDamageAbilityActive;
 
+    GameManager gameManager;
+    ArenaManager arenaManager;
+
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-        DontDestroyOnLoad(gameObject);
+        gameManager = FindAnyObjectByType<GameManager>();
+        arenaManager = FindAnyObjectByType<ArenaManager>();
     }
-
-
 
     public void ActivateAbility(CardAbility ability, CardController cardController)
     {
@@ -39,9 +29,9 @@ public class AbilityManager : MonoBehaviour
 
     public void HighlightAllies()
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
-            foreach (ArenaSlot slot in ArenaManager.Instance.playerSlots)
+            foreach (ArenaSlot slot in arenaManager.playerSlots)
             {
                 if (slot.HasCard())
                 {
@@ -52,7 +42,7 @@ public class AbilityManager : MonoBehaviour
         }
         else
         {
-            foreach (ArenaSlot slot in ArenaManager.Instance.enemySlots)
+            foreach (ArenaSlot slot in arenaManager.enemySlots)
             {
                 if (slot.HasCard())
                 {

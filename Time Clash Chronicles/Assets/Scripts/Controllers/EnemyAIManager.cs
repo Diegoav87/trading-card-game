@@ -7,25 +7,29 @@ public class EnemyAIManager : MonoBehaviour
 {
     [SerializeField] Hand enemyHand;
 
+    GameManager gameManager;
+    ArenaManager arenaManager;
+
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        arenaManager = FindObjectOfType<ArenaManager>();
+    }
+
     public void InvokeCard()
     {
-        Tuple<Card, GameObject> selectedCardTuple = enemyHand.SelectCardFromEnemyHand();
+        GameObject selectedCardObject = enemyHand.SelectCardFromEnemyHand();
 
-        if (selectedCardTuple != null)
+        if (selectedCardObject != null)
         {
-            Card selectedCard = selectedCardTuple.Item1;
-            GameObject selectedCardObject = selectedCardTuple.Item2;
-
-            if (GameManager.Instance.enemyCoins.coins >= selectedCard.cost)
-            {
-                ArenaManager.Instance.InvokeCardIntoArena(selectedCardObject, selectedCard);
-            }
+            CardController selectedCardController = selectedCardObject.GetComponent<CardController>();
+            arenaManager.InvokeCardIntoArena(selectedCardObject, selectedCardController);
         }
     }
 
     public IEnumerator ActivateAbility()
     {
-        ArenaSlot enemySlot = ArenaManager.Instance.GetRandomOccupiedSlot(ArenaManager.Instance.enemySlots);
+        ArenaSlot enemySlot = arenaManager.GetRandomOccupiedSlot(arenaManager.enemySlots);
 
         CardController enemyCardController = enemySlot.GetComponentInChildren<CardController>();
 
@@ -36,13 +40,20 @@ public class EnemyAIManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        GameManager.Instance.HandleAbilityActivation();
+        gameManager.HandleAbilityActivation();
     }
 
-    public void AttackCard()
+    public IEnumerator AttackCard()
     {
 
-        StartCoroutine(ArenaManager.Instance.AttackPlayerCard());
+        ArenaSlot occupiedEnemySlot = arenaManager.GetRandomOccupiedSlot(arenaManager.enemySlots);
+        CardController enemyCardController = occupiedEnemySlot.GetComponentInChildren<CardController>();
+
+        enemyCardController.SelectCard();
+
+        yield return new WaitForSeconds(1f);
+
+        arenaManager.AttackPlayerCard();
 
     }
 }

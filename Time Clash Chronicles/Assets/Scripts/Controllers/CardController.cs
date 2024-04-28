@@ -7,28 +7,41 @@ using TMPro;
 
 public class CardController : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] Image selectionHighlight;
+    public Image selectionHighlight;
     [SerializeField] TextMeshProUGUI attackText;
     [SerializeField] TextMeshProUGUI healthText;
+
+    [SerializeField] GameObject cardBack;
+
 
     [HideInInspector] public Card cardData;
     [HideInInspector] public string owner;
 
-    int health;
-    int cost;
+
+    public int health;
+    public int cost;
 
     public int attack;
 
-    ArenaManager arenaManager;
+
 
     public bool hasAttacked;
     public bool hasUsedAbility;
 
+    public bool isFlipped = true;
+
+    ArenaManager arenaManager;
+    GameManager gameManager;
+
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        arenaManager = FindObjectOfType<ArenaManager>();
+    }
 
     void Start()
     {
         selectionHighlight.enabled = false;
-        arenaManager = FindObjectOfType<ArenaManager>();
         hasAttacked = false;
         hasUsedAbility = false;
     }
@@ -45,31 +58,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase)
+        if (gameManager.currentTurnState == GameManager.TurnState.MainPhase)
         {
-            if (AbilityManager.Instance.isHealingAbilityActive)
-            {
-                HandleHealingAbility();
-            }
-            else
-            {
-
-                if (AbilityManager.Instance.isIncreaseDamageAbilityActive)
-                {
-                    HandleIncreaseDamageAbility();
-                }
-                else
-                {
-                    HandleCardSelection();
-
-                }
-
-            }
-
-
+            HandleCardSelection();
         }
-
-
     }
 
     void HandleCardSelection()
@@ -113,43 +105,18 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         if (tag == "PlayerCard")
         {
-            GameManager.Instance.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
+            gameManager.enemyLeader.GetComponent<LeaderController>().RemoveHiglight();
             arenaManager.RemoveEnemyCardHighlights();
         }
         else
         {
-            GameManager.Instance.playerLeader.GetComponent<LeaderController>().RemoveHiglight();
+            gameManager.playerLeader.GetComponent<LeaderController>().RemoveHiglight();
             arenaManager.RemovePlayerCardHighlights();
         }
 
         DeselectCard();
     }
 
-    void HandleHealingAbility()
-    {
-        if ((tag == "PlayerCard" && GameManager.Instance.currentPlayer == "player") ||
-            (tag == "EnemyCard" && GameManager.Instance.currentPlayer == "enemy"))
-        {
-            UpdateHealth(3);
-            arenaManager.RemoveEnemyCardHighlights();
-            arenaManager.RemovePlayerCardHighlights();
-            arenaManager.selectedAttacker.DeselectCard();
-            AbilityManager.Instance.isHealingAbilityActive = false;
-        }
-    }
-
-    void HandleIncreaseDamageAbility()
-    {
-        if ((tag == "PlayerCard" && GameManager.Instance.currentPlayer == "player") ||
-            (tag == "EnemyCard" && GameManager.Instance.currentPlayer == "enemy"))
-        {
-            UpdateAttack(3);
-            arenaManager.RemoveEnemyCardHighlights();
-            arenaManager.RemovePlayerCardHighlights();
-            arenaManager.selectedAttacker.DeselectCard();
-            AbilityManager.Instance.isIncreaseDamageAbilityActive = false;
-        }
-    }
 
 
     private void HighlightTargetCards()
@@ -157,14 +124,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         if (tag == "PlayerCard")
         {
             if (arenaManager.EnemySlotsAreEmpty())
-                GameManager.Instance.enemyLeader.GetComponent<LeaderController>().HilightLeader();
+                gameManager.enemyLeader.GetComponent<LeaderController>().HilightLeader();
             else
                 arenaManager.HighlightEnemyCards();
         }
         else
         {
             if (arenaManager.PlayerSlotsAreEmpty())
-                GameManager.Instance.playerLeader.GetComponent<LeaderController>().HilightLeader();
+                gameManager.playerLeader.GetComponent<LeaderController>().HilightLeader();
             else
                 arenaManager.HighlightPlayerCards();
         }
@@ -183,9 +150,9 @@ public class CardController : MonoBehaviour, IPointerClickHandler
                 int prevHealth = target.cardData.health;
                 target.UpdateHealth(-arenaManager.selectedAttacker.attack);
 
-                Debug.Log("Attack: " + arenaManager.selectedAttacker.attack + ", Target Health: " + prevHealth + " -> " + health);
+                Debug.Log("Attack: " + arenaManager.selectedAttacker.attack + ", Target Health: " + prevHealth + " -> " + target.health);
 
-                if (health <= 0)
+                if (target.health <= 0)
                 {
                     Destroy(target.gameObject);
                 }
@@ -215,7 +182,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     bool CanSelect()
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
             return tag == "PlayerCard" && transform.parent.GetComponent<ArenaSlot>() != null;
         }
@@ -225,9 +192,9 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     bool CanDrag()
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
-            return GameManager.Instance.currentTurnState == GameManager.TurnState.MainPhase && tag == "PlayerCard";
+            return gameManager.currentTurnState == GameManager.TurnState.MainPhase && tag == "PlayerCard";
         }
 
         return false;
@@ -235,13 +202,13 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     bool HasEnoughCoinsToInvoke()
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
-            return GameManager.Instance.playerCoins.coins >= cost;
+            return gameManager.playerCoins.coins >= cost;
         }
         else
         {
-            return GameManager.Instance.enemyCoins.coins >= cost;
+            return gameManager.enemyCoins.coins >= cost;
         }
     }
 
@@ -257,15 +224,15 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     public void InvokeCard()
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
-            GameManager.Instance.playerCoins.coins -= cost;
-            GameManager.Instance.playerCoins.UpdateCoinText();
+            gameManager.playerCoins.coins -= cost;
+            gameManager.playerCoins.UpdateCoinText();
         }
         else
         {
-            GameManager.Instance.enemyCoins.coins -= cost;
-            GameManager.Instance.enemyCoins.UpdateCoinText();
+            gameManager.enemyCoins.coins -= cost;
+            gameManager.enemyCoins.UpdateCoinText();
         }
     }
 
@@ -276,9 +243,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
         if (cardData.ability != null && !hasUsedAbility)
         {
-            GameManager.Instance.activateAbilityButton.interactable = true;
+            gameManager.activateAbilityButton.interactable = true;
         }
     }
+
 
     public void DeselectCard()
     {
@@ -287,7 +255,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
         if (cardData.ability != null)
         {
-            GameManager.Instance.activateAbilityButton.interactable = false;
+            gameManager.activateAbilityButton.interactable = false;
         }
     }
 
@@ -317,5 +285,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         {
             attackText.text = attack.ToString();
         }
+    }
+
+    public void FlipCard()
+    {
+        isFlipped = !isFlipped;
+        cardBack.SetActive(isFlipped);
     }
 }

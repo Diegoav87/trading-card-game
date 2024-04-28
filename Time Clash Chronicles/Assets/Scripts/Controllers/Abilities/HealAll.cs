@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class HealAll : CardAbility
 {
+    GameManager gameManager;
+    ArenaManager arenaManager;
+
+    public HealAll(GameManager gManager, ArenaManager aManager)
+    {
+        gameManager = gManager;
+        arenaManager = aManager;
+    }
+
     public void Execute(CardController cardController)
     {
-        if (GameManager.Instance.currentPlayer == "player")
+        if (gameManager.currentPlayer == "player")
         {
-            foreach (ArenaSlot slot in ArenaManager.Instance.playerSlots)
+            foreach (ArenaSlot slot in arenaManager.playerSlots)
             {
                 if (slot.HasCard())
                 {
@@ -19,7 +28,7 @@ public class HealAll : CardAbility
         }
         else
         {
-            foreach (ArenaSlot slot in ArenaManager.Instance.enemySlots)
+            foreach (ArenaSlot slot in arenaManager.enemySlots)
             {
                 if (slot.HasCard())
                 {

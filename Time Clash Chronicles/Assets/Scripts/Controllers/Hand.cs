@@ -10,9 +10,14 @@ public class Hand : MonoBehaviour
     [SerializeField] GameObject handSlotPrefab;
     [SerializeField] GameObject cardPrefab;
 
-
+    GameManager gameManager;
 
     int handSize = 6;
+
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 
     public void AddCard(Card card, string owner)
     {
@@ -24,8 +29,17 @@ public class Hand : MonoBehaviour
 
             GameObject cardObject = Instantiate(cardPrefab, emptySlot.transform);
             cardObject.GetComponent<CardDisplay>().LoadCard(card);
-            cardObject.GetComponent<CardController>().owner = owner;
-            cardObject.GetComponent<CardController>().SetCardData(card);
+
+            CardController cardController = cardObject.GetComponent<CardController>();
+            cardController.owner = owner;
+            cardController.SetCardData(card);
+            cardController.FlipCard();
+            cardObject.GetComponent<CardHover>().cardData = card;
+
+            // if (owner == "enemy")
+            // {
+            //     cardController.FlipCard();
+            // }
         }
     }
 
@@ -47,22 +61,23 @@ public class Hand : MonoBehaviour
         return null;
     }
 
-    public Tuple<Card, GameObject> SelectCardFromEnemyHand()
+    public GameObject SelectCardFromEnemyHand()
     {
-        Tuple<Card, GameObject> selectedCardTuple = null;
-
-        for (int i = 0; i < cards.Count; i++)
+        foreach (GameObject slot in handSlots)
         {
-            Card card = cards[i];
-            if (GameManager.Instance.enemyCoins.coins >= card.cost)
+            if (slot.GetComponent<HandSlot>().HasCard())
             {
-                GameObject cardObject = handSlots[i].GetComponentInChildren<CardController>().gameObject;
-                selectedCardTuple = Tuple.Create(card, cardObject);
-                break;
+                CardController cardController = slot.GetComponentInChildren<CardController>();
+                GameObject cardObject = cardController.gameObject;
+                if (gameManager.enemyCoins.coins >= cardController.cost)
+                {
+                    return cardObject;
+
+                }
             }
         }
 
-        return selectedCardTuple;
+        return null;
     }
 
     public void RemoveCard(Card card)
