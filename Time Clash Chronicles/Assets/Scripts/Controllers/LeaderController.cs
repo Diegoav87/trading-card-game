@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LeaderController : MonoBehaviour, IPointerClickHandler
 {
@@ -10,6 +11,8 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     float health;
 
     float maxHealth;
+
+    public string owner;
 
     [SerializeField] Image leaderImage;
     [SerializeField] Image healthBar;
@@ -58,8 +61,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                     {
                         arenaManager.selectedAttacker.hasAttacked = true;
                         TakeDamage(arenaManager.selectedAttacker.attack);
-
-
+                        arenaManager.selectedAttacker.DeselectCard();
                     }
                 }
                 else
@@ -68,7 +70,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                     {
                         arenaManager.selectedAttacker.hasAttacked = true;
                         TakeDamage(arenaManager.selectedAttacker.attack);
-
+                        arenaManager.selectedAttacker.DeselectCard();
                     }
                 }
             }
@@ -86,10 +88,18 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
         if (health <= 0)
         {
             Destroy(gameObject);
+
+            if (owner == "player")
+            {
+                SceneManager.LoadScene("DefeatScreen");
+            }
+            else
+            {
+                SceneManager.LoadScene("VictoryScreen");
+            }
         }
 
         RemoveHiglight();
-        arenaManager.selectedAttacker.DeselectCard();
         UpdateHealthBar();
     }
 

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine.Networking;
 
 using System;
+using System.Buffers;
 
 
 public class GameManager : MonoBehaviour
@@ -17,8 +18,6 @@ public class GameManager : MonoBehaviour
         DrawPhase,
         MainPhase,
     }
-
-    public static GameManager Instance { get; private set; }
     [SerializeField] Deck playerDeck;
     [SerializeField] Deck enemyDeck;
     [SerializeField] Hand playerHand;
@@ -46,24 +45,18 @@ public class GameManager : MonoBehaviour
     ArenaManager arenaManager;
 
     EnemyAIManager enemyAIManager;
+    AbilityManager abilityManager;
 
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-    void Start()
+    void Awake()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
         enemyAIManager = FindAnyObjectByType<EnemyAIManager>();
+        abilityManager = FindAnyObjectByType<AbilityManager>();
+    }
+
+    void Start()
+    {
         activateAbilityButton.onClick.AddListener(ActivateAbilityButtonClicked);
         endTurnButton.onClick.AddListener(EndTurnButtonClicked);
 
@@ -80,14 +73,14 @@ public class GameManager : MonoBehaviour
 
     public void HandleAbilityActivation()
     {
-        if (ArenaManager.Instance.selectedAttacker != null && !ArenaManager.Instance.selectedAttacker.hasUsedAbility)
+        if (arenaManager.selectedAttacker != null && !arenaManager.selectedAttacker.hasUsedAbility)
         {
-            if (ArenaManager.Instance.selectedAttacker.cardData.ability != null)
+            if (arenaManager.selectedAttacker.cardData.ability != null)
             {
-                AbilityManager.Instance.ActivateAbility(ArenaManager.Instance.selectedAttacker.cardData.ability, ArenaManager.Instance.selectedAttacker);
-                ArenaManager.Instance.selectedAttacker.hasUsedAbility = true;
-                ArenaManager.Instance.selectedAttacker.DeselectCard();
-                ArenaManager.Instance.RemoveEnemyCardHighlights();
+                abilityManager.ActivateAbility(arenaManager.selectedAttacker.cardData.ability, arenaManager.selectedAttacker);
+                arenaManager.selectedAttacker.hasUsedAbility = true;
+                arenaManager.selectedAttacker.DeselectCard();
+                arenaManager.RemoveEnemyCardHighlights();
             }
             else
             {
@@ -96,11 +89,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    GameObject CreateLeader(LeaderData leader, GameObject slot)
+    GameObject CreateLeader(LeaderData leader, GameObject slot, string owner)
     {
         Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
         GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
         playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
+        playerLeaderObject.GetComponent<LeaderController>().owner = owner;
         playerLeaderObject.GetComponent<LeaderDisplay>().LoadLeader(leaderData);
         return playerLeaderObject;
     }
@@ -109,17 +103,16 @@ public class GameManager : MonoBehaviour
     {
         foreach (CardData card in deckData.cards)
         {
-            deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, new IncreaseAllDamage(), Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id)));
-
+            deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, new IncreaseAllDamage(this, arenaManager), Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id)));
         }
 
         if (player == "player")
         {
-            playerLeader = CreateLeader(deckData.leader, playerLeaderSlot);
+            playerLeader = CreateLeader(deckData.leader, playerLeaderSlot, "player");
         }
         else
         {
-            enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot);
+            enemyLeader = CreateLeader(deckData.leader, enemyLeaderSlot, "enemy");
         }
     }
 
@@ -237,7 +230,7 @@ public class GameManager : MonoBehaviour
 
         float[] actionWeights = { 0.4f, 0.3f, 0.2f, 0.1f };
 
-        int numActions = 2;
+        int numActions = 3;
         // Debug.Log("Number of actions: " + numActions);
 
         for (int i = 0; i < numActions; i++)
@@ -249,7 +242,7 @@ public class GameManager : MonoBehaviour
             // Debug.Log("Number of action: " + i);
 
 
-            if (ArenaManager.Instance.EnemySlotsAreEmpty())
+            if (arenaManager.EnemySlotsAreEmpty())
             {
                 enemyAIManager.InvokeCard();
             }
@@ -264,7 +257,7 @@ public class GameManager : MonoBehaviour
                         StartCoroutine(enemyAIManager.ActivateAbility());
                         break;
                     case 2:
-                        enemyAIManager.AttackCard();
+                        StartCoroutine(enemyAIManager.AttackCard());
                         break;
                     case 3:
                         EndTurnButtonClicked();

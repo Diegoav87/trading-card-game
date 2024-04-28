@@ -4,8 +4,6 @@ using UnityEngine;
 using System.Linq;
 public class ArenaManager : MonoBehaviour
 {
-    public static ArenaManager Instance { get; private set; }
-
     public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
     public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
 
@@ -13,18 +11,12 @@ public class ArenaManager : MonoBehaviour
 
     [SerializeField] Hand enemyHand;
 
+    GameManager gameManager;
+
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     public void SetSelectedAttacker(CardController attacker)
@@ -40,7 +32,7 @@ public class ArenaManager : MonoBehaviour
 
     }
 
-    public void InvokeCardIntoArena(GameObject cardObject, Card card)
+    public void InvokeCardIntoArena(GameObject cardObject, CardController cardController)
     {
         ArenaSlot randomSlot = GetRandomFreeSlot(enemySlots);
 
@@ -49,10 +41,11 @@ public class ArenaManager : MonoBehaviour
             cardObject.transform.SetParent(randomSlot.transform);
             cardObject.transform.localPosition = Vector3.zero;
 
-            GameManager.Instance.enemyCoins.coins -= card.cost;
-            GameManager.Instance.enemyCoins.UpdateCoinText();
+            gameManager.enemyCoins.coins -= cardController.cost;
+            gameManager.enemyCoins.UpdateCoinText();
 
-            enemyHand.RemoveCard(card);
+
+            // cardObject.GetComponent<CardController>().FlipCard();
         }
     }
 
@@ -86,31 +79,26 @@ public class ArenaManager : MonoBehaviour
         }
     }
 
-    public IEnumerator AttackPlayerCard()
+    public void AttackPlayerCard()
     {
-
-        ArenaSlot occupiedEnemySlot = GetRandomOccupiedSlot(enemySlots);
-        CardController enemyCardController = occupiedEnemySlot.GetComponentInChildren<CardController>();
-
-        selectedAttacker = enemyCardController;
-        enemyCardController.SelectCard();
-
-        yield return new WaitForSeconds(1f);
-
-        if (PlayerSlotsAreEmpty())
+        if (!selectedAttacker.hasAttacked)
         {
-            GameManager.Instance.playerLeader.GetComponent<LeaderController>().TakeDamage(selectedAttacker.attack);
+            if (PlayerSlotsAreEmpty())
+            {
+                selectedAttacker.hasAttacked = true;
+                gameManager.playerLeader.GetComponent<LeaderController>().TakeDamage(selectedAttacker.attack);
+                selectedAttacker.DeselectCard();
+            }
+            else
+            {
+                ArenaSlot occupiedPlayerSlot = GetRandomOccupiedSlot(playerSlots);
+                CardController playerCardController = occupiedPlayerSlot.GetComponentInChildren<CardController>();
+
+
+                playerCardController.AttackCard(playerCardController);
+                selectedAttacker.DeselectCard();
+            }
         }
-        else
-        {
-            ArenaSlot occupiedPlayerSlot = GetRandomOccupiedSlot(playerSlots);
-            CardController playerCardController = occupiedPlayerSlot.GetComponentInChildren<CardController>();
-
-
-            playerCardController.AttackCard(playerCardController);
-            enemyCardController.DeselectCard();
-        }
-
 
     }
 

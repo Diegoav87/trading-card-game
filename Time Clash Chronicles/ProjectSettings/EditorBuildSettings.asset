@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DeckSelect.unity
     guid: 9da1d8b62c0d7494ca44598002f0e491
+  - enabled: 1
+    path: Assets/Scenes/DefeatScreen.unity
+    guid: db1f3f221dcf15544baef219ae425c8e
+  - enabled: 1
+    path: Assets/Scenes/VictoryScreen.unity
+    guid: 7e09642520c3a2d43b2b090aba324811
   m_configObjects: {}
