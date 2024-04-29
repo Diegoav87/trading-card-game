@@ -178,11 +178,11 @@
                 })
                 .then(data => {
                     console.log(data);
-                    const winratePercentage = parseFloat(data.winrate).toFixed(2); // Extract winrate from the response
+                    const winratePercentage = parseFloat(data.winrate).toFixed(2); 
                     const winrateData = google.visualization.arrayToDataTable([
                         ['Winrate', 'Percentage'],
-                        ['Winrate', parseFloat(winratePercentage)], // Parse value as float
-                        ['Loss rate', 100 - parseFloat(winratePercentage)] // Parse value as float
+                        ['Winrate', parseFloat(winratePercentage)], 
+                        ['Loss rate', 100 - parseFloat(winratePercentage)] 
                     ]);
                     const winrateChart = new google.visualization.PieChart(document.getElementById('winrate-chart'));
                     winrateChart.draw(winrateData, {
