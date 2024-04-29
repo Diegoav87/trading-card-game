@@ -2,12 +2,12 @@
 
 import { check, body, validationResult } from "express-validator";
 import express, { response } from "express";
-import mysql from "mysql2/promise"
-
+import mysql from "mysql2/promise";
+import cors from 'cors';
 const app = express();
 
 const port = 5000;
-
+app.use(cors());
 app.use(express.json());
 
 async function connectToDB() {
@@ -228,7 +228,7 @@ app.get("/api/decks/:id", async (request, response) => {
     }
   }
 });
-app.get("/api/player/winrate", async (request, response) =>{
+app.get("/api/player/winrate", async (request, response) => {
   let connection = null;
 
   try {
@@ -238,36 +238,57 @@ app.get("/api/player/winrate", async (request, response) =>{
     if (results.length === 0) {
       return response.status(404).json({ error: "No existe información suficiente" });
     }
-    response.status(200).json(results[0])
-    
-  }
-  catch (error) {
-    response.status(500);
-    response.json(error);
+    const winrate = parseFloat(results[0].winrate).toFixed(2); // Convert winrate to float with 2 decimal places
+    response.status(200).json({ winrate }); // Return winrate as an object with a key "winrate"
+  } catch (error) {
+    response.status(500).json({ error: error.message });
     console.log(error);
   }
+});
 
-})
-app.get("/api/games/winrate", async (request, response) =>{
+app.get("/api/game/bestdecks", async (request, response) => {
   let connection = null;
 
   try {
     connection = await connectToDB();
-    const [results, fields] = await connection.execute("SELECT AVG(wins / (wins + loses)) * 100 AS winrate FROM player");
+    const [results, fields] = await connection.execute("SELECT deck.name, SUM(game.win) AS victorias_totales, COUNT(game.win) AS partidas_totales, (SUM(game.win) / COUNT(game.win)) * 100 AS porcentaje_victoria FROM game INNER JOIN deck ON game.deck_id = deck.deck_id GROUP BY game.deck_id ORDER BY porcentaje_victoria DESC, game.deck_id DESC LIMIT 5;");
 
     if (results.length === 0) {
-      return response.status(404).json({ error: "No existe información suficiente" });
+      return response.status(404).json({ error: "Data not found" });
     }
-    response.status(200).json(results[0])
-    
-  }
-  catch (error) {
-    response.status(500);
-    response.json(error);
+    const mappedResults = results.map(result => ({
+      name: result.name,
+      victorias_totales: parseInt(result.victorias_totales), // Convert to integer
+      partidas_totales: parseInt(result.partidas_totales), // Convert to integer
+      porcentaje_victoria: parseFloat(result.porcentaje_victoria).toFixed(2) // Convert to float with 2 decimal places
+    }));
+    response.status(200).json(mappedResults);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
     console.log(error);
   }
+});
 
-})
+app.get("/api/game/mostusedecks", async (request, response) => {
+  let connection = null;
+
+  try {
+    connection = await connectToDB();
+    const [results, fields] = await connection.execute("SELECT name AS Deck, COUNT(game.deck_id) AS top_deck FROM game INNER JOIN deck ON game.deck_id = deck.deck_id GROUP BY game.deck_id ORDER BY top_deck DESC, game.deck_id DESC LIMIT 5;");
+
+    if (results.length === 0) {
+      return response.status(404).json({ error: "Deck not found" });
+    }
+    const mappedResults = results.map(result => ({
+      Deck: result.Deck,
+      top_deck: parseInt(result.top_deck) // Convert to integer
+    }));
+    response.status(200).json(mappedResults);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+    console.log(error);
+  }
+});
 app.post("/api/games", [
   body('player1_id').isInt({ min: 1 }).withMessage("El ID del jugador 1 debe ser un número entero positivo"),
   body('player2_id').isInt({ min: 1 }).withMessage("El ID del jugador 2 debe ser un número entero positivo"),
