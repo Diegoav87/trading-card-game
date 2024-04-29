@@ -33,27 +33,28 @@ public class EnemyAIManager : MonoBehaviour
 
         CardController enemyCardController = enemySlot.GetComponentInChildren<CardController>();
 
-        if (!enemyCardController.hasUsedAbility)
+        if (!enemyCardController.hasUsedAbility && enemyCardController.cardData.ability != null)
         {
             enemyCardController.SelectCard();
-
+            yield return new WaitForSeconds(1f);
+            gameManager.HandleAbilityActivation();
         }
-
-        yield return new WaitForSeconds(1f);
-        gameManager.HandleAbilityActivation();
     }
 
     public IEnumerator AttackCard()
     {
-
         ArenaSlot occupiedEnemySlot = arenaManager.GetRandomOccupiedSlot(arenaManager.enemySlots);
         CardController enemyCardController = occupiedEnemySlot.GetComponentInChildren<CardController>();
 
-        enemyCardController.SelectCard();
+        if (!enemyCardController.hasAttacked)
+        {
+            enemyCardController.SelectCard();
 
-        yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);
 
-        arenaManager.AttackPlayerCard();
+            arenaManager.AttackPlayerCard();
+        }
+
 
     }
 }

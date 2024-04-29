@@ -36,10 +36,10 @@ public class Hand : MonoBehaviour
             cardController.FlipCard();
             cardObject.GetComponent<CardHover>().cardData = card;
 
-            // if (owner == "enemy")
-            // {
-            //     cardController.FlipCard();
-            // }
+            if (owner == "enemy")
+            {
+                cardController.FlipCard();
+            }
         }
     }
 

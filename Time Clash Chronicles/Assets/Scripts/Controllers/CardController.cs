@@ -33,10 +33,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     ArenaManager arenaManager;
     GameManager gameManager;
 
+    AudioManager audioManager;
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
         arenaManager = FindObjectOfType<ArenaManager>();
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     void Start()
@@ -58,7 +60,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (gameManager.currentTurnState == GameManager.TurnState.MainPhase)
+        if (gameManager.currentTurnState == GameManager.TurnState.MainPhase && !gameManager.IsFirstTurn())
         {
             HandleCardSelection();
         }
@@ -154,6 +156,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
                 if (target.health <= 0)
                 {
+                    CardHover cardHover = GetComponent<CardHover>();
+                    cardHover.cardPreview.transform.localScale = new Vector3(0f, 0f, 0f);
                     Destroy(target.gameObject);
                 }
 
@@ -169,6 +173,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
                 }
 
                 arenaManager.selectedAttacker.DeselectCard();
+
+                audioManager.Play("Attack");
 
             }
 
@@ -228,6 +234,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
         {
             gameManager.playerCoins.coins -= cost;
             gameManager.playerCoins.UpdateCoinText();
+            audioManager.Play("Invoke");
         }
         else
         {

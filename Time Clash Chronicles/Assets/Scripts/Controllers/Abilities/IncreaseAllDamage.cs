@@ -6,11 +6,13 @@ public class IncreaseAllDamage : CardAbility
 {
     GameManager gameManager;
     ArenaManager arenaManager;
+    AbilityManager abilityManager;
 
-    public IncreaseAllDamage(GameManager gManager, ArenaManager aManager)
+    public IncreaseAllDamage(GameManager gManager, ArenaManager aManager, AbilityManager abManager)
     {
         gameManager = gManager;
         arenaManager = aManager;
+        abilityManager = abManager;
     }
 
     public void Execute(CardController cardController)
@@ -22,7 +24,18 @@ public class IncreaseAllDamage : CardAbility
                 if (slot.HasCard())
                 {
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
-                    targetCardController.UpdateAttack(2);
+
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
+
+                    if (targetCardController.attack < 10 - value)
+                    {
+                        targetCardController.UpdateAttack(value);
+                    }
+                    else
+                    {
+                        targetCardController.attack = 9;
+                        targetCardController.UpdateAttack(0);
+                    }
                 }
             }
         }
@@ -33,7 +46,18 @@ public class IncreaseAllDamage : CardAbility
                 if (slot.HasCard())
                 {
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
-                    targetCardController.UpdateAttack(2);
+
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
+
+                    if (targetCardController.attack < 10 - value)
+                    {
+                        targetCardController.UpdateAttack(value);
+                    }
+                    else
+                    {
+                        targetCardController.attack = 9;
+                        targetCardController.UpdateAttack(0);
+                    }
                 }
             }
         }

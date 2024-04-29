@@ -10,4 +10,5 @@ public class CardData
     public string basic_attack;
     public int cost;
     public string nation;
+    public AbilityData ability;
 }

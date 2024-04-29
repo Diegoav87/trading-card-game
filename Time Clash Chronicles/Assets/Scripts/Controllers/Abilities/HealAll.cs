@@ -6,11 +6,13 @@ public class HealAll : CardAbility
 {
     GameManager gameManager;
     ArenaManager arenaManager;
+    AbilityManager abilityManager;
 
-    public HealAll(GameManager gManager, ArenaManager aManager)
+    public HealAll(GameManager gManager, ArenaManager aManager, AbilityManager abManager)
     {
         gameManager = gManager;
         arenaManager = aManager;
+        abilityManager = abManager;
     }
 
     public void Execute(CardController cardController)
@@ -22,7 +24,18 @@ public class HealAll : CardAbility
                 if (slot.HasCard())
                 {
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
-                    targetCardController.UpdateHealth(2);
+
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
+
+                    if (targetCardController.health < 10 - value)
+                    {
+                        targetCardController.UpdateHealth(value);
+                    }
+                    else
+                    {
+                        targetCardController.health = 9;
+                        targetCardController.UpdateHealth(0);
+                    }
                 }
             }
         }
@@ -33,7 +46,18 @@ public class HealAll : CardAbility
                 if (slot.HasCard())
                 {
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
-                    targetCardController.UpdateHealth(2);
+
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
+
+                    if (targetCardController.health < 10 - value)
+                    {
+                        targetCardController.UpdateHealth(value);
+                    }
+                    else
+                    {
+                        targetCardController.health = 9;
+                        targetCardController.UpdateHealth(0);
+                    }
                 }
             }
         }

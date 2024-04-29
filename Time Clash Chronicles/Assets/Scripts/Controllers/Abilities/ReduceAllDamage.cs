@@ -7,11 +7,15 @@ public class ReduceAllDamage : CardAbility
     GameManager gameManager;
     ArenaManager arenaManager;
 
-    public ReduceAllDamage(GameManager gManager, ArenaManager aManager)
+    AbilityManager abilityManager;
+
+    public ReduceAllDamage(GameManager gManager, ArenaManager aManager, AbilityManager abManager)
     {
         gameManager = gManager;
         arenaManager = aManager;
+        abilityManager = abManager;
     }
+
 
     public void Execute(CardController cardController)
     {
@@ -23,11 +27,16 @@ public class ReduceAllDamage : CardAbility
                 {
 
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
 
-                    if (targetCardController.attack > 1)
+                    if (targetCardController.attack > value)
                     {
-                        targetCardController.UpdateAttack(-2);
-
+                        targetCardController.UpdateAttack(-value);
+                    }
+                    else
+                    {
+                        targetCardController.attack = 1;
+                        targetCardController.UpdateAttack(0);
                     }
                 }
             }
@@ -39,11 +48,16 @@ public class ReduceAllDamage : CardAbility
                 if (slot.HasCard())
                 {
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
+                    int value = abilityManager.GetAbilityValue(cardController.cardData.abilityData.ability_id, cardController.cardData.id);
 
-                    if (targetCardController.attack > 1)
+                    if (targetCardController.attack > value)
                     {
-                        targetCardController.UpdateAttack(-2);
-
+                        targetCardController.UpdateAttack(-value);
+                    }
+                    else
+                    {
+                        targetCardController.attack = 1;
+                        targetCardController.UpdateAttack(0);
                     }
                 }
             }

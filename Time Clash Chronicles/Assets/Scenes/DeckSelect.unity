@@ -846,6 +846,52 @@ MonoBehaviour:
   goBackButton: {fileID: 479718384}
   selectButton: {fileID: 3500521}
   currentDeckId: 0
+--- !u!1 &765757567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 765757569}
+  - component: {fileID: 765757568}
+  m_Layer: 0
+  m_Name: AbilityManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &765757568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765757567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5632bcef47f7c428970d6ebea16fe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHealingAbilityActive: 0
+  isIncreaseDamageAbilityActive: 0
+--- !u!4 &765757569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765757567}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 511.85425, y: 270.62244, z: -3.1451128}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &796698664
 GameObject:
   m_ObjectHideFlags: 0
@@ -1604,3 +1650,4 @@ SceneRoots:
   - {fileID: 1545693518}
   - {fileID: 723002544}
   - {fileID: 497352913}
+  - {fileID: 765757569}

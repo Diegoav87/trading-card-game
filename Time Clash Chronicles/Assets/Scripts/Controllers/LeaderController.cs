@@ -18,10 +18,12 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     [SerializeField] Image healthBar;
 
     ArenaManager arenaManager;
+    APIManager apiManager;
 
     void Start()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
+        apiManager = FindObjectOfType<APIManager>();
     }
 
     public void SetLeaderData(Leader leader)
@@ -91,10 +93,20 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
 
             if (owner == "player")
             {
+                int currentPlayer = PlayerPrefs.GetInt("CurrentPlayer");
+                int selectedDeck = PlayerPrefs.GetInt("SelectedPlayerDeck");
+
+                StartCoroutine(apiManager.CreateGame("games/", new { player_id = currentPlayer, deck_id = selectedDeck, win = false }));
+
                 SceneManager.LoadScene("DefeatScreen");
             }
             else
             {
+                int currentPlayer = PlayerPrefs.GetInt("CurrentPlayer");
+                int selectedDeck = PlayerPrefs.GetInt("SelectedPlayerDeck");
+
+                StartCoroutine(apiManager.CreateGame("games/", new { player_id = currentPlayer, deck_id = selectedDeck, win = true }));
+
                 SceneManager.LoadScene("VictoryScreen");
             }
         }

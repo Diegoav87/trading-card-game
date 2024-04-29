@@ -60,6 +60,7 @@ public class Login : MonoBehaviour
                 string playerData = www.downloadHandler.text;
                 PlayerData player = JsonConvert.DeserializeObject<PlayerData>(playerData);
                 Debug.Log(player.username);
+                PlayerPrefs.SetInt("CurrentPlayer", player.player_id);
 
                 SceneManager.LoadScene("Menu");
 

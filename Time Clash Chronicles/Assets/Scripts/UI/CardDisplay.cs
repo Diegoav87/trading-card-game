@@ -14,6 +14,14 @@ public class CardDisplay : MonoBehaviour
 
     public Image flag;
 
+    public TMP_Text ability;
+
+    AbilityManager abilityManager;
+
+    void Awake()
+    {
+        abilityManager = FindObjectOfType<AbilityManager>();
+    }
 
     public void LoadCard(Card card)
     {
@@ -23,6 +31,18 @@ public class CardDisplay : MonoBehaviour
         costText.text = card.cost.ToString();
         imageSprite.sprite = card.image;
         flag.sprite = card.flag;
+
+        if (card.abilityData != null)
+        {
+            string description = card.abilityData.description;
+            int value = abilityManager.GetAbilityValue(card.abilityData.ability_id, card.id);
+
+            ability.text = description.Replace("{value}", value.ToString());
+        }
+        else
+        {
+            ability.text = "";
+        }
     }
 
 

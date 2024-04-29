@@ -173,7 +173,7 @@ public class APIManager : MonoBehaviour
         yield return StartCoroutine(SendPostRequest(endpoint, playerData));
     }
 
-    IEnumerator CreateGame(string endpoint, object gameData)
+    public IEnumerator CreateGame(string endpoint, object gameData)
     {
         yield return StartCoroutine(SendPostRequest(endpoint, gameData));
     }

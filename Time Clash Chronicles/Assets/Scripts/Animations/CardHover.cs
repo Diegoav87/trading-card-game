@@ -12,7 +12,7 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
 
     GameObject gameCanvas;
-    GameObject cardPreview;
+    public GameObject cardPreview;
     Coroutine hoverCoroutine;
 
     public Card cardData;
@@ -30,7 +30,7 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     void SetCardPosition()
     {
         cardPreview.transform.position = transform.position;
-        cardPreview.transform.position = new Vector3(transform.position.x + 130, cardPreview.transform.position.y, 0f);
+        cardPreview.transform.position = new Vector3(transform.position.x + 140, cardPreview.transform.position.y, 0f);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -57,6 +57,6 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         yield return new WaitForSeconds(hoverDuration);
 
         SetCardPosition();
-        cardPreview.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+        cardPreview.transform.localScale = new Vector3(1.8f, 1.8f, 1.8f);
     }
 }
