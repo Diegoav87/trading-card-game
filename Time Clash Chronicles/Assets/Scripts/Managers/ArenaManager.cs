@@ -12,11 +12,13 @@ public class ArenaManager : MonoBehaviour
     [SerializeField] Hand enemyHand;
 
     GameManager gameManager;
+    AudioManager audioManager;
 
 
     private void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     public void SetSelectedAttacker(CardController attacker)
@@ -45,7 +47,9 @@ public class ArenaManager : MonoBehaviour
             gameManager.enemyCoins.UpdateCoinText();
 
 
-            // cardObject.GetComponent<CardController>().FlipCard();
+            cardObject.GetComponent<CardController>().FlipCard();
+
+            audioManager.Play("Invoke");
         }
     }
 
@@ -81,6 +85,7 @@ public class ArenaManager : MonoBehaviour
 
     public void AttackPlayerCard()
     {
+
         if (!selectedAttacker.hasAttacked)
         {
             if (PlayerSlotsAreEmpty())
@@ -96,7 +101,6 @@ public class ArenaManager : MonoBehaviour
 
 
                 playerCardController.AttackCard(playerCardController);
-                selectedAttacker.DeselectCard();
             }
         }
 

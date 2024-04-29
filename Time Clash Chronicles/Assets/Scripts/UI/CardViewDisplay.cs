@@ -16,6 +16,15 @@ public class CardViewDisplay : MonoBehaviour
 
     public Image flag;
 
+    public TMP_Text ability;
+
+    AbilityManager abilityManager;
+
+    void Awake()
+    {
+        abilityManager = FindObjectOfType<AbilityManager>();
+    }
+
     public void LoadCard(CardData cardData, int leaderId)
     {
         nameText.text = cardData.name;
@@ -24,5 +33,17 @@ public class CardViewDisplay : MonoBehaviour
         costText.text = cardData.cost.ToString();
         image.sprite = Resources.Load<Sprite>("Images/CardsImages/" + cardData.card_id);
         flag.sprite = Resources.Load<Sprite>("Images/Leaders/Flags/" + leaderId);
+
+        if (cardData.ability != null)
+        {
+            string description = cardData.ability.description;
+            int value = abilityManager.GetAbilityValue(cardData.ability.ability_id, cardData.card_id);
+
+            ability.text = description.Replace("{value}", value.ToString());
+        }
+        else
+        {
+            ability.text = "";
+        }
     }
 }

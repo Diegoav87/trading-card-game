@@ -27,6 +27,8 @@ public class StealAllLife : CardAbility
                     CardController targetCardController = slot.GetComponentInChildren<CardController>();
                     targetCardController.UpdateHealth(-1);
 
+
+
                     if (targetCardController.health <= 0)
                     {
                         UnityEngine.Object.Destroy(targetCardController.gameObject);

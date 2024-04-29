@@ -47,16 +47,22 @@ public class GameManager : MonoBehaviour
     EnemyAIManager enemyAIManager;
     AbilityManager abilityManager;
 
+    AudioManager audioManager;
+
+    int currentTurn;
+
 
     void Awake()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
         enemyAIManager = FindAnyObjectByType<EnemyAIManager>();
         abilityManager = FindAnyObjectByType<AbilityManager>();
+        audioManager = FindAnyObjectByType<AudioManager>();
     }
 
     void Start()
     {
+        audioManager.Play("GameTheme");
         activateAbilityButton.onClick.AddListener(ActivateAbilityButtonClicked);
         endTurnButton.onClick.AddListener(EndTurnButtonClicked);
 
@@ -82,10 +88,7 @@ public class GameManager : MonoBehaviour
                 arenaManager.selectedAttacker.DeselectCard();
                 arenaManager.RemoveEnemyCardHighlights();
             }
-            else
-            {
-                Debug.LogWarning("No ability assigned to this card.");
-            }
+
         }
     }
 
@@ -103,7 +106,33 @@ public class GameManager : MonoBehaviour
     {
         foreach (CardData card in deckData.cards)
         {
-            deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, new IncreaseAllDamage(this, arenaManager), Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id)));
+            CardAbility ability = null;
+
+            if (card.ability != null)
+            {
+                if (card.ability.ability_id == 1)
+                {
+                    ability = new AttackLeader(this, abilityManager);
+                }
+                else if (card.ability.ability_id == 2)
+                {
+                    ability = new ReduceAllDamage(this, arenaManager, abilityManager);
+                }
+                else if (card.ability.ability_id == 3)
+                {
+                    ability = new IncreaseAllDamage(this, arenaManager, abilityManager);
+                }
+                else if (card.ability.ability_id == 4)
+                {
+                    ability = new StealAllLife(this, arenaManager);
+                }
+                else if (card.ability.ability_id == 5)
+                {
+                    ability = new HealAll(this, arenaManager, abilityManager);
+                }
+            }
+
+            deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, ability, Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id), card.ability));
         }
 
         if (player == "player")
@@ -189,10 +218,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator DrawPhase()
     {
+        currentTurn += 1;
+
         yield return new WaitForSeconds(1f);
 
         if (currentPlayer == "player")
         {
+            audioManager.Play("Turn");
             DrawCardToHand(playerDeck, playerHand, "player");
             playerCoins.coins += 3;
             playerCoins.UpdateCoinText();
@@ -208,6 +240,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+
+
         currentTurnState = TurnState.MainPhase;
 
         if (currentPlayer == "player")
@@ -222,27 +256,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool IsFirstTurn()
+    {
+        return currentTurn <= 2;
+    }
+
 
 
     IEnumerator PlayEnemyTurn()
     {
         yield return new WaitForSeconds(1f);
 
-        float[] actionWeights = { 0.4f, 0.3f, 0.2f, 0.1f };
+        float[] actionWeights = { 0.3f, 0.3f, 0.3f, 0.1f };
 
         int numActions = 3;
-        // Debug.Log("Number of actions: " + numActions);
 
         for (int i = 0; i < numActions; i++)
         {
-            int actionType = 2;
-            // int actionType = WeightedRandomIndex(actionWeights);
-
-            // Debug.Log("Selected action: " + actionType);
-            // Debug.Log("Number of action: " + i);
+            int actionType = WeightedRandomIndex(actionWeights);
 
 
-            if (arenaManager.EnemySlotsAreEmpty())
+            if (arenaManager.EnemySlotsAreEmpty() || IsFirstTurn())
             {
                 enemyAIManager.InvokeCard();
             }
@@ -310,6 +344,7 @@ public class GameManager : MonoBehaviour
         arenaManager.ResetPlayerAttacks();
         currentTurnState = TurnState.DrawPhase;
         endTurnButton.interactable = false;
+        audioManager.Play("ChangeTurn");
         StartCoroutine(DrawPhase());
     }
 
