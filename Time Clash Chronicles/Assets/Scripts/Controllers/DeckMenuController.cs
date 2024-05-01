@@ -24,8 +24,17 @@ public class DeckMenuController : MonoBehaviour
 
     public int currentDeckId;
 
+    AudioManager audioManager;
+
+    void Awake()
+    {
+        audioManager = FindAnyObjectByType<AudioManager>();
+    }
+
     void Start()
     {
+        audioManager.Play("Menu");
+
         selectButton.onClick.AddListener(SelectDeck);
         goBackButton.onClick.AddListener(GoBack);
 

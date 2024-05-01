@@ -15,14 +15,15 @@ public class Register : MonoBehaviour
     public TMP_InputField usernameInput;
     public TMP_InputField passwordInput;
     public Button registerButton;
-    public Button goToLoginButton;
+    public Button loginButton;
+
     string apiURL = "http://localhost:5000/api/";
 
 
     void Start()
     {
         registerButton.onClick.AddListener(RegisterPlayer);
-        goToLoginButton.onClick.AddListener(GoToLogin);
+        loginButton.onClick.AddListener(GoToLogin);
     }
 
     void CreatePlayer(string endpoint, object playerData)
@@ -50,6 +51,7 @@ public class Register : MonoBehaviour
             else
             {
                 Debug.Log($"Post request successful!");
+                SceneManager.LoadScene("Login1");
             }
         }
     }

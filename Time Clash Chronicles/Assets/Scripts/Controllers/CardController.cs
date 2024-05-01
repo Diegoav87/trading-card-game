@@ -13,10 +13,13 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] GameObject cardBack;
 
+    [SerializeField] Image healthBar;
+    [SerializeField] Image healthBarBackground;
 
     [HideInInspector] public Card cardData;
     [HideInInspector] public string owner;
 
+    float maxHealth;
 
     public int health;
     public int cost;
@@ -43,6 +46,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler
 
     void Start()
     {
+        healthBar.enabled = false;
+        healthBarBackground.enabled = false;
         selectionHighlight.enabled = false;
         hasAttacked = false;
         hasUsedAbility = false;
@@ -52,6 +57,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         cardData = card;
         health = cardData.health;
+        maxHealth = cardData.health;
         cost = cardData.cost;
         attack = cardData.attack;
         string cardTag = owner == "player" ? "PlayerCard" : "EnemyCard";
@@ -270,6 +276,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         health += amount;
         UpdateHealthText();
+        UpdateHealthBar();
     }
 
     public void UpdateAttack(int amount)
@@ -298,5 +305,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler
     {
         isFlipped = !isFlipped;
         cardBack.SetActive(isFlipped);
+    }
+
+    void UpdateHealthBar()
+    {
+        healthBar.enabled = true;
+        healthBarBackground.enabled = true;
+        healthBar.fillAmount = health / maxHealth;
     }
 }

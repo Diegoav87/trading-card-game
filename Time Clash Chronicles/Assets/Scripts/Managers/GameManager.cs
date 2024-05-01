@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
                 arenaManager.selectedAttacker.hasUsedAbility = true;
                 arenaManager.selectedAttacker.DeselectCard();
                 arenaManager.RemoveEnemyCardHighlights();
+                audioManager.Play("Ability");
             }
 
         }
@@ -124,7 +125,7 @@ public class GameManager : MonoBehaviour
                 }
                 else if (card.ability.ability_id == 4)
                 {
-                    ability = new StealAllLife(this, arenaManager);
+                    ability = new StealAllLife(this, arenaManager, abilityManager);
                 }
                 else if (card.ability.ability_id == 5)
                 {
@@ -224,7 +225,6 @@ public class GameManager : MonoBehaviour
 
         if (currentPlayer == "player")
         {
-            audioManager.Play("Turn");
             DrawCardToHand(playerDeck, playerHand, "player");
             playerCoins.coins += 3;
             playerCoins.UpdateCoinText();
@@ -267,9 +267,9 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        float[] actionWeights = { 0.3f, 0.3f, 0.3f, 0.1f };
+        float[] actionWeights = { 0.2f, 0.4f, 0.4f };
 
-        int numActions = 3;
+        int numActions = 5;
 
         for (int i = 0; i < numActions; i++)
         {
@@ -278,6 +278,7 @@ public class GameManager : MonoBehaviour
 
             if (arenaManager.EnemySlotsAreEmpty() || IsFirstTurn())
             {
+                enemyAIManager.InvokeCard();
                 enemyAIManager.InvokeCard();
             }
             else

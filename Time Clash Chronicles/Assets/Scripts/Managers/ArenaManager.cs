@@ -93,6 +93,7 @@ public class ArenaManager : MonoBehaviour
                 selectedAttacker.hasAttacked = true;
                 gameManager.playerLeader.GetComponent<LeaderController>().TakeDamage(selectedAttacker.attack);
                 selectedAttacker.DeselectCard();
+                audioManager.Play("Attack");
             }
             else
             {
