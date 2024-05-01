@@ -102,6 +102,21 @@ public class AbilityManager : MonoBehaviour
                 value = 2;
             }
         }
+        else if (ability_id == 4)
+        {
+            if (card_id == 26)
+            {
+                value = 1;
+            }
+            else if (card_id == 24)
+            {
+                value = 2;
+            }
+            else if (card_id == 27)
+            {
+                value = 3;
+            }
+        }
         else if (ability_id == 5)
         {
             if (card_id == 31)

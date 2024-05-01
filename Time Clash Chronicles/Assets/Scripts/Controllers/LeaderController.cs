@@ -20,10 +20,13 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
     ArenaManager arenaManager;
     APIManager apiManager;
 
+    AudioManager audioManager;
+
     void Start()
     {
         arenaManager = FindObjectOfType<ArenaManager>();
         apiManager = FindObjectOfType<APIManager>();
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     public void SetLeaderData(Leader leader)
@@ -61,6 +64,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                 {
                     if (arenaManager.EnemySlotsAreEmpty())
                     {
+                        audioManager.Play("Attack");
                         arenaManager.selectedAttacker.hasAttacked = true;
                         TakeDamage(arenaManager.selectedAttacker.attack);
                         arenaManager.selectedAttacker.DeselectCard();
@@ -70,6 +74,7 @@ public class LeaderController : MonoBehaviour, IPointerClickHandler
                 {
                     if (arenaManager.PlayerSlotsAreEmpty())
                     {
+                        audioManager.Play("Attack");
                         arenaManager.selectedAttacker.hasAttacked = true;
                         TakeDamage(arenaManager.selectedAttacker.attack);
                         arenaManager.selectedAttacker.DeselectCard();

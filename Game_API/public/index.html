@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Unity WebGL Player | Time Clash Chronicles</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
+    <link rel="stylesheet" href="TemplateData/style.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div id="branding">
+          <h1>Time Clash Cronicles</h1>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#Timeclash">Que es?</a></li>
+            <li><a href="#jugar">Jugar</a></li>
+            <li><a href="#Estadisticas">Estadisticas</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="Timeclash">
+        <div class="pop-out-box">
+          <div class="container">
+            <h1>Time Clash Chronicles!</h1>
+            <p>
+              Es un juego de cartas estratégico donde personajes históricos de
+              diferentes países luchan en una arena. Cada mazo representa una
+              nación con sus propias fortalezas, debilidades y líder. El
+              objetivo es reducir la vida del líder enemigo a 0, derrotando su
+              ejército representado por cartas.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="newsletter">
+        <div class="container">
+          <h2>Reglas del Juego:</h2>
+          <div class="separacion-divs">
+            Cada jugador tiene un líder que comienza con sus puntos de vida.
+            Durante el juego, los jugadores deben gestionar sus recursos, tanto
+            las cartas de su mazo como las monedas de oro, para tomar decisiones
+            estratégicas en cada turno.
+          </div>
+          <div class="separacion-divs">
+            Las cartas pueden tener habilidades especiales, como curar,
+            incrementar daño, reducir daño, etc, lo que añade una capa adicional
+            de estrategia al juego. La partida termina cuando uno de los líderes
+            alcanza 0 puntos de vida, lo que lleva a la victoria del otro
+            jugador.
+          </div>
+          <div class="separacion-divs">
+            Con estas mecánicas, el juego fomenta la planificación a largo
+            plazo, la adaptabilidad y la toma de decisiones rápidas,
+            convirtiéndolo en un desafío estratégico emocionante para los
+            jugadores.
+          </div>
+        </div>
+      </section>
+
+      <section id="jugar" style="margin-top: 50px">
+        <div class="container">
+          <h3 style="text-align: center">Jugar Time Clash Chronicles!</h3>
+          <div id="unity-container" class="unity-desktop">
+            <canvas
+              id="unity-canvas"
+              width="960"
+              height="600"
+              tabindex="-1"
+            ></canvas>
+            <div id="unity-loading-bar">
+              <div id="unity-logo"></div>
+              <div id="unity-progress-bar-empty">
+                <div id="unity-progress-bar-full"></div>
+              </div>
+            </div>
+            <div id="unity-warning"></div>
+            <div id="unity-footer">
+              <div id="unity-webgl-logo"></div>
+              <div id="unity-fullscreen-button"></div>
+              <div id="unity-build-title">Time Clash Chronicles</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="Estadisticas"
+        style="margin-top: 100px; margin-bottom: 100px"
+      >
+        <div class="container">
+          <h2 style="margin-bottom: 30px">
+            Estadisticas: Time Clash Chronicles
+          </h2>
+          <div class="chart-container">
+            <div
+              style="margin-right: 10px"
+              class="chart"
+              id="winrate-pie-chart"
+            >
+              <h2>Winrate</h2>
+              <div id="winrate-chart"></div>
+            </div>
+
+            <div
+              style="margin-left: 10px"
+              class="chart"
+              id="best-decks-bar-chart"
+            >
+              <h2>Winrate % by deck</h2>
+              <div id="best-decks-chart"></div>
+            </div>
+
+            <div class="chart" id="most-used-decks-bar-chart">
+              <h2>Most Used Decks</h2>
+              <div id="most-used-decks-chart"></div>
+            </div>
+          </div>
+          <p></p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Diego Abdo, Isaac Shakalo, Andres Gomes &copy; Copyright 2024</p>
+    </footer>
+
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
+
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length
+            ? "block"
+            : "none";
+        }
+        var div = document.createElement("div");
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == "error") div.style = "background: red; padding: 10px;";
+        else {
+          if (type == "warning")
+            div.style = "background: yellow; padding: 10px;";
+          setTimeout(function () {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/public.loader.js";
+      var config = {
+        dataUrl: buildUrl + "/public.data",
+        frameworkUrl: buildUrl + "/public.framework.js",
+        codeUrl: buildUrl + "/public.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Equipo Diego Isaac Andres",
+        productName: "Time Clash Chronicles",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
+
+      // By default, Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+
+        var meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
+      } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        })
+          .then((unityInstance) => {
+            loadingBar.style.display = "none";
+            fullscreenButton.onclick = () => {
+              unityInstance.SetFullscreen(1);
+            };
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
+
+      document.body.appendChild(script);
+    </script>
+    <script>
+      google.charts.load("current", { packages: ["corechart", "bar"] });
+      google.charts.setOnLoadCallback(drawCharts);
+
+      function drawCharts() {
+        // Fetch data from the winrate endpoint and create a pie chart
+        fetch("http://127.0.0.1:5000/api/player/winrate")
+          .then((response) => {
+            console.log(response);
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            const winratePercentage = parseFloat(data.winrate).toFixed(2);
+            const winrateData = google.visualization.arrayToDataTable([
+              ["Winrate", "Percentage"],
+              ["Winrate", parseFloat(winratePercentage)],
+              ["Loss rate", 100 - parseFloat(winratePercentage)],
+            ]);
+            const winrateChart = new google.visualization.PieChart(
+              document.getElementById("winrate-chart")
+            );
+            winrateChart.draw(winrateData, {});
+          })
+          .catch((error) => {
+            console.error("Error fetching winrate:", error);
+          });
+
+        // Fetch data from the best decks endpoint and create a bar chart
+        fetch("http://127.0.0.1:5000/api/game/bestdecks")
+          .then((response) => {
+            console.log(response);
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            const decks = data.map((deck) => deck.name);
+            const victories = data.map((deck) =>
+              parseFloat(deck.porcentaje_victoria).toFixed(2)
+            ); // Extract porcentaje_victoria from the response and parse value as float
+            const bestDecksData = google.visualization.arrayToDataTable([
+              ["Deck", "Victories"],
+              ...decks.map((deck, index) => [
+                deck,
+                parseFloat(victories[index]),
+              ]), // Parse value as float
+            ]);
+            const bestDecksChart = new google.visualization.BarChart(
+              document.getElementById("best-decks-chart")
+            );
+            bestDecksChart.draw(bestDecksData, {
+              legend: { position: "none" },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching best decks:", error);
+          });
+
+        // Fetch data from the most used decks endpoint and create a bar chart
+        fetch("http://127.0.0.1:5000/api/game/mostusedecks")
+          .then((response) => {
+            console.log(response);
+            return response.json();
+          })
+          .then((data) => {
+            console.log(data);
+            const decks = data.map((deck) => deck.Deck);
+            const counts = data.map((deck) => parseInt(deck.top_deck)); // Parse value as integer
+            const mostUsedDecksData = google.visualization.arrayToDataTable([
+              ["Deck", "Top Deck Count"],
+              ...decks.map((deck, index) => [deck, counts[index]]),
+            ]);
+            const mostUsedDecksChart = new google.visualization.BarChart(
+              document.getElementById("most-used-decks-chart")
+            );
+            mostUsedDecksChart.draw(mostUsedDecksData, {
+              legend: { position: "none" },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching most used decks:", error);
+          });
+      }
+    </script>
+  </body>
+</html>

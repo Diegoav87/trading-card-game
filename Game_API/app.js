@@ -4,11 +4,18 @@ import { check, body, validationResult } from "express-validator";
 import express, { response } from "express";
 import mysql from "mysql2/promise";
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
 
 const port = 5000;
 app.use(cors());
 app.use(express.json());
+app.use(express.static(join(__dirname, 'public')));
 
 async function connectToDB() {
   return await mysql.createConnection({
@@ -241,13 +248,14 @@ app.get("/api/player/winrate", async (request, response) => {
 
   try {
     connection = await connectToDB();
-    const [results, fields] = await connection.execute("SELECT AVG(wins / (wins + loses)) * 100 AS winrate FROM player");
+    const [results, fields] = await connection.execute("SELECT SUM(win) AS total_wins, COUNT(*) - SUM(win) AS total_losses, CASE WHEN COUNT(*) = 0 THEN 0 ELSE (SUM(win) / COUNT(*)) * 100 END AS total_win_rate FROM game;");
 
     if (results.length === 0) {
       return response.status(404).json({ error: "No existe información suficiente" });
     }
-    
-    const winrate = parseFloat(results[0].winrate).toFixed(2); // Convert winrate to float with 2 decimal places
+
+
+    const winrate = parseFloat(results[0].total_win_rate).toFixed(2); // Convert winrate to float with 2 decimal places
     response.status(200).json({ winrate }); // Return winrate as an object with a key "winrate"
   } catch (error) {
     response.status(500).json({ error: error.message });
