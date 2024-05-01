@@ -169,7 +169,7 @@ Líder: Napoleón
 - Revolucionario Francés
 - Cura
 - Victor Hugo
-- ## María Antonieta
+- María Antonieta
 
 #### Estados Unidos
 
@@ -195,7 +195,7 @@ Líder: Napoleón
 
 #### Japón
 
-- Líder: Oda Nobuna\*\*
+- Líder: Oda Nobuna
 
 - Samurai(-1 punto vida al oponente con habilidad )
 - Ninja
@@ -246,40 +246,6 @@ Líder: Napoleón
 5. Fin del Juego:
    - El juego termina cuando los puntos de vida de uno de los jugadores llegan a 0, o si un jugador se rinde o desconecta de la partida.
 
-## _Desarrollo_
-
-### **Clases Abstractas / Componentes**
-
-1. BaseCard
-2. BasePlayer
-3. BaseDeck
-4. BaseGame
-5. BaseEffect
-6. BaseObject
-7. BaseInteractable
-
-### **Clases Derivadas / Composición de Componentes**
-
-1. BaseCard
-   - Card
-   - NationLeader
-2. BasePlayer
-   - Player
-   - AIPlayer
-3. BaseDeck
-   - Deck
-   - DeckManager
-4. Effect
-   - LeaderEffect
-   - CardEffect
-5. BaseGame
-   - Game
-   - Arena
-   - Board
-   - TurnManager
-   - CardManager
-6. BaseObject
-   - GoldCoin
 
 ## _Gráficos_
 
