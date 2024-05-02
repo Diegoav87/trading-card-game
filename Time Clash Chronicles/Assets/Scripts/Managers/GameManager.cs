@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
     // Insantiate a leader object and load its data
     GameObject CreateLeader(LeaderData leader, GameObject slot, string owner)
     {
-        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
+        Leader leaderData = new Leader(leader.name, 15, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
         GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
         playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
         playerLeaderObject.GetComponent<LeaderController>().owner = owner;
