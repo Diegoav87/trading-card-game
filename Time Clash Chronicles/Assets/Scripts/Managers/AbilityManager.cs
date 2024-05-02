@@ -9,15 +9,7 @@ public class AbilityManager : MonoBehaviour
 
     [HideInInspector] public bool isIncreaseDamageAbilityActive;
 
-    GameManager gameManager;
-    ArenaManager arenaManager;
-
-    void Awake()
-    {
-        gameManager = FindAnyObjectByType<GameManager>();
-        arenaManager = FindAnyObjectByType<ArenaManager>();
-    }
-
+    // Call the execute method of the card ability
     public void ActivateAbility(CardAbility ability, CardController cardController)
     {
         if (ability != null)
@@ -27,32 +19,7 @@ public class AbilityManager : MonoBehaviour
         }
     }
 
-    public void HighlightAllies()
-    {
-        if (gameManager.currentPlayer == "player")
-        {
-            foreach (ArenaSlot slot in arenaManager.playerSlots)
-            {
-                if (slot.HasCard())
-                {
-                    CardDisplay cardUI = slot.GetComponentInChildren<CardDisplay>();
-                    cardUI.imageSprite.color = Color.green;
-                }
-            }
-        }
-        else
-        {
-            foreach (ArenaSlot slot in arenaManager.enemySlots)
-            {
-                if (slot.HasCard())
-                {
-                    CardDisplay cardUI = slot.GetComponentInChildren<CardDisplay>();
-                    cardUI.imageSprite.color = Color.green;
-                }
-            }
-        }
-    }
-
+    // Get the ability execution value for each card
     public int GetAbilityValue(int ability_id, int card_id)
     {
         int value = 0;

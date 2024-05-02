@@ -4,16 +4,14 @@ using UnityEngine;
 using System.Linq;
 public class ArenaManager : MonoBehaviour
 {
-    public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
-    public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
-
-    [HideInInspector] public CardController selectedAttacker;
-
     [SerializeField] Hand enemyHand;
+    [HideInInspector] public CardController selectedAttacker;
 
     GameManager gameManager;
     AudioManager audioManager;
 
+    public List<ArenaSlot> playerSlots = new List<ArenaSlot>();
+    public List<ArenaSlot> enemySlots = new List<ArenaSlot>();
 
     private void Awake()
     {
@@ -34,6 +32,7 @@ public class ArenaManager : MonoBehaviour
 
     }
 
+    // Gets a random slot from the enemy arena and invokes a card into it
     public void InvokeCardIntoArena(GameObject cardObject, CardController cardController)
     {
         ArenaSlot randomSlot = GetRandomFreeSlot(enemySlots);
@@ -53,6 +52,7 @@ public class ArenaManager : MonoBehaviour
         }
     }
 
+    // Get a random free slot from the arena if there are
     public ArenaSlot GetRandomFreeSlot(List<ArenaSlot> slots)
     {
         List<ArenaSlot> emptySlots = slots.Where(slot => !slot.HasCard()).ToList();
@@ -68,6 +68,7 @@ public class ArenaManager : MonoBehaviour
         }
     }
 
+    // Get a random occupied slot from the arena if there are
     public ArenaSlot GetRandomOccupiedSlot(List<ArenaSlot> slots)
     {
         List<ArenaSlot> occupiedSlots = slots.Where(slot => slot.HasCard()).ToList();
@@ -83,6 +84,8 @@ public class ArenaManager : MonoBehaviour
         }
     }
 
+    // If the player slots are empty attack the player leader
+    // If the player slots are not empty get a random player card from the arena and attack it
     public void AttackPlayerCard()
     {
 
@@ -107,6 +110,7 @@ public class ArenaManager : MonoBehaviour
 
     }
 
+    // Highlight all the cards that the arena slots have
     void HighlightCards(List<ArenaSlot> slots)
     {
         foreach (ArenaSlot slot in slots)
@@ -121,6 +125,7 @@ public class ArenaManager : MonoBehaviour
         }
     }
 
+    // Remove the card highlights from the arena slots
     void RemoveCardHighlights(List<ArenaSlot> slots)
     {
         foreach (ArenaSlot slot in slots)
@@ -183,6 +188,7 @@ public class ArenaManager : MonoBehaviour
         return SlotsAreEmpty(enemySlots);
     }
 
+    // Reset the attacks for a set of cards in arena slots after a turn has ended
     void ResetAttacks(List<ArenaSlot> slots)
     {
         foreach (ArenaSlot slot in slots)
