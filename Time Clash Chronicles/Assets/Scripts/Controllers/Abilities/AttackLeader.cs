@@ -13,6 +13,7 @@ public class AttackLeader : CardAbility
         abilityManager = abManager;
     }
 
+    // Attack the opponent leader directly skipping the cards
     public void Execute(CardController cardController)
     {
         if (gameManager.currentPlayer == "player")

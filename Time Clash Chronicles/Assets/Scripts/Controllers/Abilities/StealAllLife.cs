@@ -16,6 +16,8 @@ public class StealAllLife : CardAbility
         arenaManager = aManager;
         abilityManager = abManager;
     }
+
+    // Steals life from all opponent cards and adds it to the current card. Goes up to 9 max.
     public void Execute(CardController cardController)
     {
         if (gameManager.currentPlayer == "player")
@@ -44,11 +46,17 @@ public class StealAllLife : CardAbility
             if (cardController.health < 10 - (count * value))
             {
                 cardController.UpdateHealth(count * value);
+
+                if (cardController.health > cardController.maxHealth)
+                {
+                    cardController.maxHealth = cardController.health;
+                }
             }
             else
             {
                 cardController.health = 9;
                 cardController.UpdateHealth(0);
+                cardController.maxHealth = 9;
             }
         }
         else
@@ -77,11 +85,17 @@ public class StealAllLife : CardAbility
             if (cardController.health < 10 - (count * value))
             {
                 cardController.UpdateHealth(count * value);
+
+                if (cardController.health > cardController.maxHealth)
+                {
+                    cardController.maxHealth = cardController.health;
+                }
             }
             else
             {
                 cardController.health = 9;
                 cardController.UpdateHealth(0);
+                cardController.maxHealth = 9;
             }
         }
 

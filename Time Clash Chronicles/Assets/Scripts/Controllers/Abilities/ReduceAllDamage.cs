@@ -16,7 +16,7 @@ public class ReduceAllDamage : CardAbility
         abilityManager = abManager;
     }
 
-
+    // Reduce the damage of all opponent cards. Can't go below 1.
     public void Execute(CardController cardController)
     {
         if (gameManager.currentPlayer == "player")
