@@ -28,13 +28,10 @@
 4. [Diseño de Nivel](#diseño-de-nivel)
    1. [Arenas](#arenas)
    2. [Flujo de Juego](#flujo-de-juego)
-5. [Desarrollo](#desarrollo)
-   1. [Clases Abstractas](#clases-abstractas)
-   2. [Clases Derivadas](#clases-derivadas)
-6. [Gráficos](#gráficos)
+5. [Gráficos](#gráficos)
    1. [Atributos de Estilo](#atributos-de-estilo)
    2. [Graphicos Necesitados](#gráficos-necesitados)
-7. [Sonidos/Música](#sonidosmúsica)
+6. [Sonidos/Música](#sonidosmúsica)
    1. [Atributos de Estilo](#atributos-de-estilo-1)
    2. [Sonidos Requeridos](#sonidos-requeridos)
    3. [Música](#música)
@@ -124,24 +121,24 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 - Gladiador(+1 al usar habilidad)
 
 (Francia)
-2, Incrementa Daño, Daño, Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.
+2, Atacar Lider, Al ser invocada Las cartas en la arena atacan directamente a el lider.
 
 - Juana de Arco (+3 puntos de ataque )
 
 (Japon)
-3, Reducir Daño, Al ser invocada hace daño a todas las cartas enemigas restandoles puntos de vida.
+3, Robar Vida, Al ser invocada se roba vida de el enemigo y se suma a la vida de tus cartas en la arena.
 
 - Sasaki Kojiro (-3 punto vida al oponente con habilidad)
 - Samurai(-1 punto vida al oponente con habilidad )
 
 (Mexico)
-4, Robar Vida, Al ser invocada se roba vida de el enemigo y se suma a la vida de tus cartas en la arena.
+4, Incrementa Daño, Daño, Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.
 
 - Moctezuma (+2 puntos de vida con habilidad)
 - Shaman (+1 punto de vida con habilidad )
 
 (Estados Unidos)
-5, Atacar Lider, Al ser invocada Las cartas en la arena atacan directamente a el lider.
+5, Reducir Daño, Al ser invocada hace daño a todas las cartas enemigas restandoles puntos de vida.
 
 - atacar directo al lider con habilidad
 
