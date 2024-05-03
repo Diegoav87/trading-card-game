@@ -20,8 +20,8 @@ app.use(express.static(join(__dirname, 'public')));
 async function connectToDB() {
   return await mysql.createConnection({
     host: "localhost",
-    user: "root",
-    password: "diego",
+    user: "Gomesinho",
+    password: "andres",
     database: "time_clash_chronicles",
   });
 }

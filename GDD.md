@@ -28,13 +28,10 @@
 4. [Diseño de Nivel](#diseño-de-nivel)
    1. [Arenas](#arenas)
    2. [Flujo de Juego](#flujo-de-juego)
-5. [Desarrollo](#desarrollo)
-   1. [Clases Abstractas](#clases-abstractas)
-   2. [Clases Derivadas](#clases-derivadas)
-6. [Gráficos](#gráficos)
+5. [Gráficos](#gráficos)
    1. [Atributos de Estilo](#atributos-de-estilo)
    2. [Graphicos Necesitados](#gráficos-necesitados)
-7. [Sonidos/Música](#sonidosmúsica)
+6. [Sonidos/Música](#sonidosmúsica)
    1. [Atributos de Estilo](#atributos-de-estilo-1)
    2. [Sonidos Requeridos](#sonidos-requeridos)
    3. [Música](#música)
@@ -114,15 +111,24 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 
 #### 6. Efectos:
 
-- Curar: Al ser activada se le sube la vida a las cartas aliadas de la arena.
+(Italia)
+Curar: Al ser activada se le sube la vida a las cartas aliadas de la arena.
 
-- Incrementa Daño: Al ser activada se aumenta el daño a las cartas aliadas de la arena.
+(Francia)
+Atacar Lider: Al ser activada la carta ataca directamente al líder enemigo.
 
-- Reducir Daño: Al ser activada se le reduce el daño a las cartas enemigas en la arena.
+(Japon)
+Robar Vida, Al ser invocada se roba vida de el enemigo y se suma a la vida de tus cartas en la arena.
 
-- Robar Vida: Al ser activada se roba vida de los enemigos de la arena.
+(Mexico)
+ Incrementa Daño, Daño, Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.
+ 
+(Estados Unidos)
 
-- Atacar Lider: Al ser activada la carta ataca directamente al líder enemigo.
+ Reducir Daño, Al ser invocada hace daño a todas las cartas enemigas restandoles puntos de vida.
+
+
+
 
 ### **Arena**
 
