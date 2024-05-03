@@ -30,7 +30,7 @@ public class CardHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     void SetCardPosition()
     {
         cardPreview.transform.position = transform.position;
-        cardPreview.transform.position = new Vector3(transform.position.x + 210, cardPreview.transform.position.y, 0f);
+        cardPreview.transform.position = new Vector3(transform.position.x + 150, cardPreview.transform.position.y, 0f);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -48,11 +48,11 @@ El objetivo del juego es bajar la vida del líder enemigo a 0 puntos de vida. Pa
 
 ### **Gameplay**
 
-Cada jugador podrá elegir uno de los mazos disponibles al iniciar el juego, los cuales se encuentran ya prearmados dependiendo de su país. Una vez en la arena de juego se decide aleatoriamente que jugador inicia. Cada jugador empieza con tres cartas de su mazo que se dan de manera aleatoria y una cierta cantidad de monedas de oro. Al inicio de cada turno cada jugador toma una carta de su mazo y recibe 3 monedas de oro. Cada líder empieza con 20 puntos de vida.
+Cada jugador podrá elegir uno de los mazos disponibles al iniciar el juego, los cuales se encuentran ya prearmados dependiendo de su país. Una vez en la arena de juego se decide aleatoriamente que jugador inicia. Cada jugador empieza con tres cartas de su mazo que se dan de manera aleatoria y una cierta cantidad de monedas de oro. Al inicio de cada turno cada jugador toma una carta de su mazo y recibe 3 monedas de oro. Cada líder empieza con 15 puntos de vida.
 
 Cada carta tiene sus puntos de vida, ataque y costo, con esto el jugador puede decidir qué hacer en ese turno. El jugador puede invocar hasta 5 cartas según la cantidad de oro que tenga, las cartas invocadas solo pueden atacar hasta un turno después de ser invocada, a menos de que tengan un efecto que se los permita. Se puede atacar tanto a las cartas enemigas como al líder enemigo, sin embargo, no puedes atacar directamente al líder si existe al menos 1 carta enemiga en el campo.
 
-Cuando una carta recibe un daño mayor o igual a los puntos de vida, es destruida y la diferencia entre el daño y la vida de la carta se le resta al líder enemigo. Una vez que los puntos de vida del líder enemigo llegan a 0, la partida termina y el jugador gana. Sin embargo, si el jugador pierde todos sus puntos de vida, es derrotado.
+Cuando una carta recibe un daño mayor o igual a los puntos de vida, es destruida. Una vez que los puntos de vida del líder enemigo llegan a 0, la partida termina y el jugador gana. Sin embargo, si el jugador pierde todos sus puntos de vida, es derrotado.
 
 ### **Mindset**
 
@@ -72,8 +72,6 @@ El juego será centrado en estrategia y marcado por lo visual y musical, el juga
    1. Dentro de la baraja se podrán ver todas las cartas que esta contiene con sus detalles.
 4. Arena de Juego
    1. En la arena de juego, cada jugador dispondrá de cinco posiciones, con una división en el centro. El jugador sostendrá en su mano tres cartas del deck, mientras que las restantes cartas del deck se ubicarán a la derecha de su mano. En la parte posterior de la arena, se situará el líder principal del país, y frente a él se desplegarán las oposiciones de las barajas que el jugador puede emplear.
-5. Estadísticas
-   1. En esta pantalla el jugador podrá ver estadísticas como su número de victorias y derrotas, número de juegos, etc.
 
 ### **Controles**
 
@@ -90,7 +88,7 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 - Se decide aleatoriamente qué jugador inicia.
 - Cada jugador comienza con tres cartas aleatorias de su mazo y el jugador que empieza con cuatro.
 - Cada jugador recibe una cierta cantidad de monedas de oro al inicio.
-- Cada líder comienza con 20 puntos de vida.
+- Cada líder comienza con 15 puntos de vida.
 
 #### 3. Invocación de Cartas:
 
@@ -103,9 +101,8 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 
 - Los jugadores pueden atacar tanto a las cartas enemigas como al líder enemigo.
 - El jugador selecciona la carta y elige a qué carta quiere atacar. La selección del ataque es manual.
-- No se puede atacar al líder si hay una carta enemiga directamente en frente de la carta almenos que haya una habilidad.
+- No se puede atacar al líder si hay una carta en la arena del enemigo.
 - Cuando una carta recibe un daño igual o mayor a sus puntos de vida, se destruye.
-- La diferencia entre el daño y la vida de la carta se resta de los puntos de vida del líder enemigo.
 - La partida termina cuando los puntos de vida del líder enemigo llegan a 0, y el jugador gana.
 
 #### 5. Habilidades:
@@ -115,32 +112,23 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 #### 6. Efectos:
 
 (Italia)
-1, Curar, Al ser invocada le sube la vida a las cartas de su pais que estan en la arena.
-
-- Diocles(+3 al usar habilidad)
-- Gladiador(+1 al usar habilidad)
+Curar: Al ser activada se le sube la vida a las cartas aliadas de la arena.
 
 (Francia)
-2, Atacar Lider, Al ser invocada Las cartas en la arena atacan directamente a el lider.
-
-- Juana de Arco (+3 puntos de ataque )
+Atacar Lider: Al ser activada la carta ataca directamente al líder enemigo.
 
 (Japon)
-3, Robar Vida, Al ser invocada se roba vida de el enemigo y se suma a la vida de tus cartas en la arena.
-
-- Sasaki Kojiro (-3 punto vida al oponente con habilidad)
-- Samurai(-1 punto vida al oponente con habilidad )
+Robar Vida, Al ser invocada se roba vida de el enemigo y se suma a la vida de tus cartas en la arena.
 
 (Mexico)
-4, Incrementa Daño, Daño, Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.
-
-- Moctezuma (+2 puntos de vida con habilidad)
-- Shaman (+1 punto de vida con habilidad )
-
+ Incrementa Daño, Daño, Al ser invocada le sube los puntos de ataque a las cartas de su pais que estan en la arena.
+ 
 (Estados Unidos)
-5, Reducir Daño, Al ser invocada hace daño a todas las cartas enemigas restandoles puntos de vida.
 
-- atacar directo al lider con habilidad
+ Reducir Daño, Al ser invocada hace daño a todas las cartas enemigas restandoles puntos de vida.
+
+
+
 
 ### **Arena**
 
@@ -150,66 +138,61 @@ El juego se manejará con el mouse para poder hacer click en los botones necesar
 
 ### Cartas
 
-**Referencia:** Ataque/Vida/Costo
-
-**Ejemplo:** Carta Dummy - 1ATK/3HP/3G (Ataque/Vida/Costo)
-
 **Naciones**
 
-#### Francia
+#### Francia - Habilidad: Atacar Líder
 
-Líder: Napoleón
-
+- Líder: Napoleón
 - Soldado de la Segunda Guerra Mundial
 - Caballero Francés
-- Juana de Arco (+3 puntos de ataque )
+- Juana de Arco
 - Revolucionario Francés
 - Cura
 - Victor Hugo
 - María Antonieta
 
-#### Estados Unidos
+#### Estados Unidos - Habilidad: Reducir Daño
 
 - Líder: George Washington
 - Soldado de la Independencia
 - Abraham Lincoln
 - Marine
-- John D. Rockefeller (atacar directo al lider con habilidad)
+- John D. Rockefeller
 - Henry Ford
 - Benjamin Franklin
 - Médico de la Guerra Civil
 
-#### México
+#### México - Habilidad: Incrementar Daño
 
 - Líder: Emiliano Zapata
 - Soldado Revolucionario
 - Charro
 - Guerrero Azteca
-- Moctezuma (+2 puntos de vida con habilidad)
+- Moctezuma
 - Quetzalcóat
 - Benito Juarez
-- Shaman (+1 punto de vida con habilidad )
+- Shaman
 
-#### Japón
+#### Japón - Habilidad: Robar Vida
 
 - Líder: Oda Nobuna
 
-- Samurai(-1 punto vida al oponente con habilidad )
+- Samurai
 - Ninja
 - Sakamoto Ryoma
 - Soldado Imperial
 - Geisha:
 - Miyamoto Musashi
-- Sasaki Kojiro (-3 punto vida al oponente con habilidad)
+- Sasaki Kojiro
 
-#### Italia
+#### Italia - Habilidad: Curar Vida
 
 - Líder: Julio César
 
 - Legionario
 - Centurión
-- Diocles(+3 al usar habilidad)
-- Gladiador(+1 al usar habilidad)
+- Diocles
+- Gladiador
 - Antiguos cristianos
 - Leonardo Da Vinci
 - Flamma
@@ -219,7 +202,7 @@ Líder: Napoleón
 1. Inicio de la Partida:
 
    - Se elige al azar un jugador para iniciar la partida.
-   - Cada jugador comienza sin monedas, con 20 puntos de vida y 3 cartas en mano.
+   - Cada jugador comienza con 3 monedas y 3 cartas en mano.
 
 2. Turno del Jugador:
 
@@ -231,9 +214,8 @@ Líder: Napoleón
 3. Ataques:
 
    - Las cartas solo pueden atacar a las cartas enemigas, no al líder, a menos que no haya cartas enemigas invocadas.
-   - Al destruir una carta enemiga, la diferencia entre el ataque y los puntos de vida de la carta se resta de los puntos de vida del jugador contrario.
    - Si no hay cartas enemigas invocadas, se puede atacar directamente al líder enemigo para reducir sus puntos de vida.
-   - Las habilidades solo pueden usarse si la carta no ha atacado en el mismo turno.
+   - Las habilidades solo pueden usarse una vez por juego.
 
 4. Fin del Turno:
 
@@ -242,7 +224,6 @@ Líder: Napoleón
 
 5. Fin del Juego:
    - El juego termina cuando los puntos de vida de uno de los jugadores llegan a 0, o si un jugador se rinde o desconecta de la partida.
-
 
 ## _Gráficos_
 

@@ -15,6 +15,7 @@ public class HealAll : CardAbility
         abilityManager = abManager;
     }
 
+    // Heal the hp of all ally cards. Goes up to 9 max.
     public void Execute(CardController cardController)
     {
         if (gameManager.currentPlayer == "player")
@@ -30,11 +31,17 @@ public class HealAll : CardAbility
                     if (targetCardController.health < 10 - value)
                     {
                         targetCardController.UpdateHealth(value);
+
+                        if (targetCardController.health > targetCardController.maxHealth)
+                        {
+                            targetCardController.maxHealth = targetCardController.health;
+                        }
                     }
                     else
                     {
                         targetCardController.health = 9;
                         targetCardController.UpdateHealth(0);
+                        targetCardController.maxHealth = 9;
                     }
                 }
             }
@@ -52,11 +59,17 @@ public class HealAll : CardAbility
                     if (targetCardController.health < 10 - value)
                     {
                         targetCardController.UpdateHealth(value);
+
+                        if (targetCardController.health > targetCardController.maxHealth)
+                        {
+                            targetCardController.maxHealth = targetCardController.health;
+                        }
                     }
                     else
                     {
                         targetCardController.health = 9;
                         targetCardController.UpdateHealth(0);
+                        targetCardController.maxHealth = 9;
                     }
                 }
             }

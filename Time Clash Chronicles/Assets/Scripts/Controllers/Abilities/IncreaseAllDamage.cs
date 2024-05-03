@@ -15,6 +15,7 @@ public class IncreaseAllDamage : CardAbility
         abilityManager = abManager;
     }
 
+    // Increase the damage of all ally cards. Goes up to 9 max.
     public void Execute(CardController cardController)
     {
         if (gameManager.currentPlayer == "player")

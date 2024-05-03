@@ -27,20 +27,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject enemyLeaderSlot;
     [SerializeField] GameObject leaderPrefab;
     [SerializeField] GameObject cardPrefab;
-
-    public Button activateAbilityButton;
-
     [HideInInspector] public GameObject playerLeader;
     [HideInInspector] public GameObject enemyLeader;
+
+    [HideInInspector] public string currentPlayer;
+
+    [HideInInspector] public TurnState currentTurnState;
 
     public CoinController playerCoins;
 
     public CoinController enemyCoins;
 
-    public TurnState currentTurnState;
     public Button endTurnButton;
 
-    public string currentPlayer;
+    public Button activateAbilityButton;
 
     ArenaManager arenaManager;
 
@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour
         audioManager = FindAnyObjectByType<AudioManager>();
     }
 
+    // Add listeners to buttons and disable them
+    // Start the call to create the decks
     void Start()
     {
         audioManager.Play("GameTheme");
@@ -77,6 +79,7 @@ public class GameManager : MonoBehaviour
         HandleAbilityActivation();
     }
 
+    // If the selected attacker has not used its ability activate it
     public void HandleAbilityActivation()
     {
         if (arenaManager.selectedAttacker != null && !arenaManager.selectedAttacker.hasUsedAbility)
@@ -93,9 +96,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Insantiate a leader object and load its data
     GameObject CreateLeader(LeaderData leader, GameObject slot, string owner)
     {
-        Leader leaderData = new Leader(leader.name, 10, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
+        Leader leaderData = new Leader(leader.name, 15, Resources.Load<Sprite>("Images/Leaders/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Flags/" + leader.leader_id), Resources.Load<Sprite>("Images/Leaders/Borders/" + leader.leader_id));
         GameObject playerLeaderObject = Instantiate(leaderPrefab, slot.transform);
         playerLeaderObject.GetComponent<LeaderController>().SetLeaderData(leaderData);
         playerLeaderObject.GetComponent<LeaderController>().owner = owner;
@@ -103,12 +107,14 @@ public class GameManager : MonoBehaviour
         return playerLeaderObject;
     }
 
+    // Create a deck with its cards and the leader
     void CreateDeck(DeckData deckData, string player, Deck deck)
     {
         foreach (CardData card in deckData.cards)
         {
             CardAbility ability = null;
 
+            // If the card has an ability set the class of the corresponding ability
             if (card.ability != null)
             {
                 if (card.ability.ability_id == 1)
@@ -133,9 +139,11 @@ public class GameManager : MonoBehaviour
                 }
             }
 
+            // Add the card to the deck list
             deck.AddCard(new Card(card.card_id, card.name, Resources.Load<Sprite>("Images/CardsImages/" + card.card_id), card.health, card.attack, card.cost, ability, Resources.Load<Sprite>("Images/Leaders/Flags/" + deckData.leader.leader_id), card.ability));
         }
 
+        // Create the leader object
         if (player == "player")
         {
             playerLeader = CreateLeader(deckData.leader, playerLeaderSlot, "player");
@@ -146,6 +154,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Get a random deck from the decks that are not being used
     int GenerateRandomDeckId(int usedId)
     {
         List<int> availableDecks = new List<int>();
@@ -163,6 +172,7 @@ public class GameManager : MonoBehaviour
         return randomDeckNumber;
     }
 
+    // Start the deck creations and shuffle them
     IEnumerator CreateAndShuffleDecks()
     {
         int deckId = PlayerPrefs.GetInt("SelectedPlayerDeck");
@@ -184,6 +194,7 @@ public class GameManager : MonoBehaviour
 
         currentPlayer = UnityEngine.Random.value < 0.5f ? "player" : "enemy";
 
+        // Start the initial draw phase
         StartCoroutine(InitialDraw());
     }
 
@@ -193,6 +204,7 @@ public class GameManager : MonoBehaviour
         currentPlayer = (currentPlayer == "player") ? "enemy" : "player";
     }
 
+    // Draw 3 cards and give 3 coins to each player
     IEnumerator InitialDraw()
     {
         yield return new WaitForSeconds(1f);
@@ -217,6 +229,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(DrawPhase());
     }
 
+    // Draw a card and give 3 coins to the current player
     IEnumerator DrawPhase()
     {
         currentTurn += 1;
@@ -244,12 +257,14 @@ public class GameManager : MonoBehaviour
 
         currentTurnState = TurnState.MainPhase;
 
+        // If the current turn is of the player activate the end turn button
         if (currentPlayer == "player")
         {
             endTurnButton.interactable = true;
         }
 
 
+        // If the enemy ai is playing activate its actions
         if (currentPlayer == "enemy")
         {
             StartCoroutine(PlayEnemyTurn());
@@ -261,21 +276,23 @@ public class GameManager : MonoBehaviour
         return currentTurn <= 2;
     }
 
-
-
+    // Activate the enemy AI
     IEnumerator PlayEnemyTurn()
     {
         yield return new WaitForSeconds(1f);
 
+        // The probabilities for the ai to perform certain action
         float[] actionWeights = { 0.2f, 0.4f, 0.4f };
 
+        // Total number of actions the ai can make in one turn
         int numActions = 5;
 
         for (int i = 0; i < numActions; i++)
         {
+            // Get the a random action for the ai to perform based on the probabilities
             int actionType = WeightedRandomIndex(actionWeights);
 
-
+            // If it is the first turn or the ai slots are empty prioritize invoking cards
             if (arenaManager.EnemySlotsAreEmpty() || IsFirstTurn())
             {
                 enemyAIManager.InvokeCard();
@@ -312,6 +329,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+    // Based on the weights pased to the function get a random value
     int WeightedRandomIndex(float[] weights)
     {
         float[] cumulativeProbabilities = new float[weights.Length];
@@ -338,6 +356,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+    // End the current turn and reset the cards attacks
     public void EndTurnButtonClicked()
     {
         SwitchTurn();
